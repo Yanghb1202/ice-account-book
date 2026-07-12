@@ -1,0 +1,37 @@
+<view class="page-wrap">
+  <!-- 顶部卡通装饰 -->
+  <view class="top-cat">
+    <image src="/images/dog_money.jpg" class="cat-img" mode="aspectFit"></image>
+  </view>
+
+  <!-- 金额大卡片 -->
+  <view class="money-card {{item.type == 0 ? 'pay-card' : 'income-card'}}">
+    <text class="money-symbol">{{item.type == 0 ? '-' : '+'}}</text>
+    <text class="money-num">{{item.money}}</text>
+    <text class="type-text">{{item.type == 0 ? '支出' : '收入'}}</text>
+  </view>
+
+  <!-- 信息列表卡片 -->
+  <view class="info-card">
+    <view class="info-item">
+      <view class="info-icon yellow">📅</view>
+      <text class="info-label">记账日期</text>
+      <text class="info-val">{{item.date}}</text>
+    </view>
+    <view class="info-item">
+      <view class="info-icon orange">🏷️</view>
+      <text class="info-label">分类</text>
+      <text class="info-val">{{item.cateName}}</text>
+    </view>
+    <view class="info-item">
+      <view class="info-icon pink">📝</view>
+      <text class="info-label">备注</text>
+      <text class="info-val">{{item.remark || '无备注'}}</text>
+    </view>
+  </view>
+
+  <!-- 返回按钮 -->
+  <view class="back-btn" bindtap="goBack">
+    <text>返回首页</text>
+  </view>
+</view>

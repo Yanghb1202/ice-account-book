@@ -1,0 +1,132 @@
+<view class="page-wrap">
+  <!-- 顶部区域 -->
+  <view class="top-area">
+    <view class="logo-row">
+      <text class="logo-text">nosh</text>
+      <view class="back-btn" bindtap="backAddBill">返回记一笔</view>
+    </view>
+
+    <view class="week-bar">
+      <block wx:for="{{weekList}}" wx:key="day">
+        <view class="week-wrap">
+          <text class="week-text">{{item.week}}</text>
+          <view class="week-item {{currentDay == item.day ? 'active' : ''}}" bindtap="selectDay" data-day="{{item.day}}">
+            <text class="day-num">{{item.dateNum}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 手账卡片 -->
+  <view class="note-card">
+    <view class="cal-top">
+      <text class="cal-title">总摄入(kcal)</text>
+      <view class="cal-num-wrap">
+        <text class="cal-num">{{totalCal}}</text>
+        <text class="cal-limit">/{{targetCal}}</text>
+      </view>
+    </view>
+
+    <view class="hole-list">
+      <view class="hole" wx:for="{{holeList}}" wx:key="*this"></view>
+    </view>
+
+    <view class="sticker-area">
+      <block wx:for="{{foodList}}" wx:key="id">
+        <view class="food-sticker">
+          <view class="sticker-bg"></view>
+          <image wx:if="{{item.img}}" class="sticker-img" src="{{item.img}}" mode="aspectFill"></image>
+          <view wx:else class="sticker-placeholder">🍽️</view>
+          <view class="sticker-desc">
+            <text class="food-name">{{item.name}}</text>
+            <text class="food-cal">{{item.cal}} kcal · ¥{{item.price}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view wx:if="{{foodList.length == 0}}" class="empty-tip">
+      <text>拍照 / 上传图片</text>
+      <text>自动生成美食贴纸</text>
+    </view>
+  </view>
+
+  <!-- AI识别弹窗 - 全屏浅色背景 -->
+  <view wx:if="{{showPopup}}" class="ai-popup-page">
+    <!-- 背景横线装饰 -->
+    <view class="popup-line-bg"></view>
+
+    <!-- 食物贴纸预览 -->
+    <view class="preview-sticker">
+      <view class="preview-sticker-bg"></view>
+      <image class="preview-img" src="{{tempImg}}" mode="aspectFill"></image>
+    </view>
+
+    <!-- 食物名称 -->
+    <text class="food-name-txt">{{aiFoodName || '识别中...'}}</text>
+
+    <!-- AI介绍文字 -->
+    <view class="ai-title">
+      <text>AI 识别食物</text>
+      <text>热量 + 营养素</text>
+      <text>还有饮食建议</text>
+    </view>
+
+    <!-- 加载中 -->
+    <view wx:if="{{loadingAi}}" class="loading-pill">
+      <text class="spark">✦</text>
+      <text>热量计算中...</text>
+    </view>
+
+    <!-- AI结果 -->
+    <view wx:else class="ai-info-card">
+      <text class="info-text">热量：{{aiCal}} kcal</text>
+      <text wx:if="{{aiConfidenceText}}" class="info-text">置信度：{{aiConfidenceText}}</text>
+      <text class="info-text">建议：{{aiTip}}</text>
+    </view>
+
+    <view wx:if="{{candidateList.length > 1}}" class="candidate-box">
+      <text class="candidate-title">识别不准？点选正确候选</text>
+      <view class="candidate-list">
+        <view
+          wx:for="{{candidateList}}"
+          wx:key="index"
+          class="candidate-item {{aiFoodName == item.name ? 'active' : ''}}"
+          bindtap="selectCandidate"
+          data-index="{{index}}"
+        >
+          <text>{{item.name}}</text>
+          <text wx:if="{{item.confidenceText}}">{{item.confidenceText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 价格输入 -->
+    <view class="price-input-wrap">
+      <text class="price-label">¥</text>
+      <input
+        class="price-input"
+        type="digit"
+        placeholder="添加价格"
+        bindinput="inputPrice"
+        value="{{price}}"
+        adjust-position="false"
+      />
+    </view>
+
+    <!-- 底部按钮 -->
+    <view class="popup-btn-row">
+      <view class="btn-cancel" bindtap="reTake">×</view>
+      <view class="btn-sure" bindtap="saveFood">✓</view>
+      <view class="btn-edit" bindtap="editFood">✎</view>
+    </view>
+  </view>
+
+  <!-- 底部导航栏 -->
+  <view class="bottom-btn-bar">
+    <view class="bottom-icon active-dot"></view>
+    <view class="btn-add" bindtap="chooseFoodImg">+</view>
+    <view class="bottom-icon grid-icon">▦</view>
+  </view>
+</view>

@@ -1,0 +1,167 @@
+<!--pages/set/set.wxml-->
+<view class="page-wrap">
+  <!-- 头部卡片 -->
+  <view class="top-card">
+    <view class="card-head">
+      <view class="head-icon">⚙️</view>
+      <view>
+        <text class="head-title">系统设置</text>
+        <text class="desc-txt">管理偏好、数据与隐私设置</text>
+      </view>
+    </view>
+    <view class="cache-row">
+      <view class="cache-item">
+        <text class="cache-label">账单记录</text>
+        <text class="cache-value">{{billCount}} 条</text>
+      </view>
+      <view class="cache-item">
+        <text class="cache-label">反馈记录</text>
+        <text class="cache-value">{{feedbackCount}} 条</text>
+      </view>
+      <view class="cache-item">
+        <text class="cache-label">缓存大小</text>
+        <text class="cache-value">{{cacheSize}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 通用设置 -->
+  <view class="section-title">通用设置</view>
+  <view class="list-card">
+    <view class="set-item">
+      <view class="item-left">
+        <text class="item-icon">🎯</text>
+        <view>
+          <text class="item-text">自动同步预算</text>
+          <text class="item-desc">记账后自动更新预算已用金额</text>
+        </view>
+      </view>
+      <switch checked="{{autoSyncBudget}}" color="#ffc837" bindchange="toggleAutoSync" />
+    </view>
+    <view class="set-item">
+      <view class="item-left">
+        <text class="item-icon">🔔</text>
+        <view>
+          <text class="item-text">反馈音效</text>
+          <text class="item-desc">提交、记账时使用轻提示</text>
+        </view>
+      </view>
+      <switch checked="{{soundEffect}}" color="#ffc837" bindchange="toggleSound" />
+    </view>
+    <view class="set-item">
+      <view class="item-left">
+        <text class="item-icon">🙈</text>
+        <view>
+          <text class="item-text">隐私模式</text>
+          <text class="item-desc">后续可用于隐藏金额显示</text>
+        </view>
+      </view>
+      <switch checked="{{privacyMode}}" color="#ffc837" bindchange="togglePrivacyMode" />
+    </view>
+  </view>
+
+  <!-- 数据管理 -->
+  <view class="section-title">数据管理</view>
+  <view class="list-card">
+    <view class="set-item" bindtap="exportData">
+      <view class="item-left">
+        <text class="item-icon">📦</text>
+        <view>
+          <text class="item-text">数据导出</text>
+          <text class="item-desc">查看当前可导出的账单数量</text>
+        </view>
+      </view>
+      <text class="right-arrow">›</text>
+    </view>
+    <view class="set-item danger-light" bindtap="clearStorage">
+      <view class="item-left">
+        <text class="item-icon">🗑️</text>
+        <view>
+          <text class="item-text">清除本地缓存</text>
+          <text class="item-desc">清空账单、预算、账本和反馈记录</text>
+        </view>
+      </view>
+      <text class="right-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 帮助与关于 -->
+  <view class="section-title">帮助与关于</view>
+  <view class="list-card">
+    <view class="set-item" bindtap="goFeedback">
+      <view class="item-left">
+        <text class="item-icon">💌</text>
+        <view>
+          <text class="item-text">帮助与反馈</text>
+          <text class="item-desc">提交问题、建议或 AI 识别反馈</text>
+        </view>
+      </view>
+      <text class="right-arrow">›</text>
+    </view>
+    <view class="set-item" bindtap="showPrivacy">
+      <view class="item-left">
+        <text class="item-icon">📜</text>
+        <view>
+          <text class="item-text">隐私政策</text>
+          <text class="item-desc">了解本地数据和 AI 图片识别说明</text>
+        </view>
+      </view>
+      <text class="right-arrow">›</text>
+    </view>
+    <view class="set-item" bindtap="showAgreement">
+      <view class="item-left">
+        <text class="item-icon">📋</text>
+        <view>
+          <text class="item-text">用户使用协议</text>
+          <text class="item-desc">查看使用约定和数据责任说明</text>
+        </view>
+      </view>
+      <text class="right-arrow">›</text>
+    </view>
+    <view class="set-item" bindtap="goAbout">
+      <view class="item-left">
+        <text class="item-icon">🐱</text>
+        <view>
+          <text class="item-text">关于冰冰记账本</text>
+          <text class="item-desc">{{version}}</text>
+        </view>
+      </view>
+      <text class="right-arrow">›</text>
+    </view>
+    <view class="set-item" bindtap="checkUpdate">
+      <view class="item-left">
+        <text class="item-icon">⬆️</text>
+        <view>
+          <text class="item-text">检查更新</text>
+          <text class="item-desc">查看当前是否为最新版本</text>
+        </view>
+      </view>
+      <text class="right-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 退出登录按钮 -->
+  <view class="logout-wrap">
+    <view class="logout-btn" bindtap="logoutConfirm">退出登录</view>
+  </view>
+
+  <!-- 底部版本文字 -->
+  <view class="copyright">
+    <text>冰冰记账本 {{version}}</text>
+    <text class="copyright-sub">数据保存在本地,请注意自行备份</text>
+  </view>
+
+  <!-- 全局弹窗 -->
+  <view wx:if="{{showModal}}" class="modal-mask" bindtap="closeModal">
+    <view class="modal-box" catchtap="stopBubble">
+      <text class="modal-icon">{{modalIcon}}</text>
+      <text class="modal-title">{{modalTitle}}</text>
+      <text class="modal-desc">{{modalDesc}}</text>
+      <view wx:if="{{modalTwoBtn}}" class="btn-row">
+        <view class="btn-cancel" bindtap="closeModal">取消</view>
+        <view class="btn-confirm" bindtap="modalConfirm">确定</view>
+      </view>
+      <view wx:else class="single-btn" bindtap="closeModal">知道啦</view>
+    </view>
+  </view>
+</view>

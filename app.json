@@ -1,0 +1,70 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/addbill/addbill",
+    "pages/statistics/statistics",
+    "pages/mine/mine",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/classify/classify",
+    "pages/classify/food/food",
+    "pages/classify/shop/shop",
+    "pages/classify/traffic/traffic",
+    "pages/classify/daily/daily",
+    "pages/classify/enjoy/enjoy",
+    "pages/classify/msg/msg",
+    "pages/classify/vacation/vacation",
+    "pages/classify/medical/medical",
+    "pages/classify/study/study",
+    "pages/classify/else/else",
+    "pages/addbill/income/income",
+    "pages/saveChallenge/saveChallenge",
+    "pages/budget/budget",
+    "pages/about/about",
+    "pages/bookManage/bookManage",
+    "pages/feedback/feedback",
+    "pages/set/set",
+    "pages/billDetail/billDetail",
+    "pages/asset/asset",
+    "pages/billList/billList"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "冰冰记账本",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "custom": false,
+    "color": "#999999",
+    "selectedColor": "#ffb844",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/images/tab_home.png",
+        "selectedIconPath": "/images/tab_home_active.png"
+      },
+      {
+        "pagePath": "pages/addbill/addbill",
+        "text": "记一笔",
+        "iconPath": "/images/tab_add.png",
+        "selectedIconPath": "/images/tab_add_active.png"
+      },
+      {
+        "pagePath": "pages/statistics/statistics",
+        "text": "统计",
+        "iconPath": "/images/tab_stat.png",
+        "selectedIconPath": "/images/tab_stat_active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "/images/tab_mine.png",
+        "selectedIconPath": "/images/tab_mine_active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

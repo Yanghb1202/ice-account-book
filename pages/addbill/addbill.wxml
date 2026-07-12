@@ -1,0 +1,129 @@
+<!--pages/addbill/addbill.wxml-->
+<view class="page-wrap">
+
+<!-- 顶部自定义导航栏 -->
+<view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+  <view class="nav-row" style="height: {{navBarHeight}}px;">
+    <text class="nav-cancel" bindtap="goBack">取消</text>
+    <view class="tab-wrap">
+      <text class="tab-item {{billType==0?'active':''}}" bindtap="switchType" data-type="0">支出</text>
+      <text class="tab-item {{billType==1?'active':''}}" bindtap="switchType" data-type="1">收入</text>
+    </view>
+    <text class="nav-confirm" bindtap="submitBill">完成</text>
+  </view>
+</view>
+
+<!-- 给 fixed 导航占位 -->
+<view class="nav-placeholder" style="height: calc({{statusBarHeight}}px + {{navBarHeight}}px);"></view>
+
+<!-- 顶部统计卡片 -->
+<view class="stat-card">
+  <view class="stat-item">
+    <text class="stat-label">今日支出</text>
+    <text class="stat-value">¥{{todayExpense}}</text>
+  </view>
+  <view class="stat-divider"></view>
+  <view class="stat-item">
+    <text class="stat-label">本月支出</text>
+    <text class="stat-value expense">¥{{monthExpense}}</text>
+  </view>
+  <view class="stat-divider"></view>
+  <view class="stat-item">
+    <text class="stat-label">本月收入</text>
+    <text class="stat-value income">¥{{monthIncome}}</text>
+  </view>
+</view>
+
+<!-- 金额输入区域 -->
+<view class="money-box">
+  <view class="money-line">
+    <text class="money-symbol">¥</text>
+    <text class="money-num">{{money}}</text>
+    <view class="book-select" bindtap="selectBook">
+      <text>{{bookName}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+  <view class="expression" wx:if="{{expression}}">{{expression}}</view>
+  <view class="cur-cate-tip" wx:if="{{cateList[curCateIndex]}}">
+    <text class="dot" style="background:{{cateList[curCateIndex].color}};">{{cateList[curCateIndex].emoji}}</text>
+    <text class="cur-cate-name">{{cateList[curCateIndex].name}}</text>
+    <text class="ai-tip" wx:if="{{billType===0 && cateList[curCateIndex].name==='餐饮'}}">点击餐饮可进入 AI 识别</text>
+  </view>
+</view>
+
+<!-- 分类图标 -->
+<view class="cate-wrap" wx:if="{{cateList && cateList.length > 0}}">
+  <view
+    class="cate-item {{curCateIndex===index?'active':''}}"
+    wx:for="{{cateList}}"
+    wx:key="id"
+    bindtap="selectCate"
+    data-index="{{index}}"
+  >
+    <view class="cate-icon" style="background:{{curCateIndex===index?'#ffd045':item.color}};">
+      <text class="cate-emoji">{{item.emoji}}</text>
+    </view>
+    <text class="cate-name">{{item.name}}</text>
+  </view>
+</view>
+
+<!-- 备注 + 日期 -->
+<view class="remark-row">
+  <input
+    class="remark-input"
+    placeholder="点击写备注..."
+    placeholder-class="remark-ph"
+    bindinput="inputRemark"
+    value="{{remark}}"
+    maxlength="30"
+  />
+  <picker mode="date" value="{{fullDate}}" bindchange="bindDateChange">
+    <view class="date-box">
+      <text class="date-icon">📅</text>
+      <text>{{dateStr}}</text>
+    </view>
+  </picker>
+</view>
+
+<!-- 常用备注 -->
+<scroll-view scroll-x="true" class="quick-remark-wrap" wx:if="{{billType===0}}">
+  <text
+    class="quick-remark-item"
+    wx:for="{{quickRemarks}}"
+    wx:key="*this"
+    data-txt="{{item}}"
+    bindtap="selectQuickRemark"
+  >{{item}}</text>
+</scroll-view>
+
+<!-- 数字键盘 -->
+<view class="keyboard-wrap">
+  <view class="key-row">
+    <text class="key-num" bindtap="inputNum" data-num="7">7</text>
+    <text class="key-num" bindtap="inputNum" data-num="8">8</text>
+    <text class="key-num" bindtap="inputNum" data-num="9">9</text>
+    <text class="key-op" bindtap="delNum">⌫</text>
+  </view>
+  <view class="key-row">
+    <text class="key-num" bindtap="inputNum" data-num="4">4</text>
+    <text class="key-num" bindtap="inputNum" data-num="5">5</text>
+    <text class="key-num" bindtap="inputNum" data-num="6">6</text>
+    <text class="key-op" bindtap="keyAdd">+</text>
+  </view>
+  <view class="key-row">
+    <text class="key-num" bindtap="inputNum" data-num="1">1</text>
+    <text class="key-num" bindtap="inputNum" data-num="2">2</text>
+    <text class="key-num" bindtap="inputNum" data-num="3">3</text>
+    <text class="key-op" bindtap="keySub">-</text>
+  </view>
+  <view class="key-row last-row">
+    <text class="key-num" bindtap="inputNum" data-num=".">.</text>
+    <text class="key-num" bindtap="inputNum" data-num="0">0</text>
+    <text class="key-num small" bindtap="selectQuickRemark" data-txt="">清</text>
+    <text class="key-submit" bindtap="submitBill">完成</text>
+  </view>
+</view>
+
+<view class="safe-bottom"></view>
+</view>

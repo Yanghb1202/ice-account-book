@@ -1,0 +1,199 @@
+.page-wrap {
+  width: 100%;
+  min-height: 100vh;
+  padding: 40rpx 30rpx;
+  box-sizing: border-box;
+}
+.week-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40rpx;
+}
+.week-item {
+  width: 80rpx;
+  height: 100rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #efede6;
+}
+.week-item.active {
+  background: #fff;
+  border: 3rpx solid #ffcc22;
+}
+.week-text {
+  font-size: 24rpx;
+  color: #888;
+}
+.day-num {
+  font-size: 34rpx;
+  margin-top: 6rpx;
+}
+.cal-top {
+  margin-bottom: 40rpx;
+}
+.cal-title {
+  font-size: 32rpx;
+  color: #999;
+}
+.cal-num-wrap {
+  display: flex;
+  align-items: baseline;
+}
+.cal-num {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: #443322;
+}
+.note-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 50rpx 30rpx;
+  min-height: 900rpx;
+  position: relative;
+}
+.note-card::before {
+  content: "";
+  position: absolute;
+  left: 20rpx;
+  top: 40rpx;
+  bottom: 40rpx;
+  width: 6rpx;
+  background-image: radial-gradient(#ddd 6rpx, transparent 6rpx);
+  background-size: 6rpx 80rpx;
+}
+.empty-tip {
+  text-align: center;
+  margin-top: 300rpx;
+  font-size: 32rpx;
+  color: #aaa;
+}
+.shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f2f2f2;
+}
+.item-left {
+  display: flex;
+  flex-direction: column;
+}
+.shop-name {
+  font-size: 34rpx;
+  color: #443322;
+}
+.shop-date {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+.shop-price {
+  font-size: 36rpx;
+  color: #c84444;
+  font-weight: 500;
+}
+/* 遮罩层：只占背景，不居中内容 */
+.popup-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 998;
+}
+/* 弹窗单独居中，浮在遮罩上层，和遮罩平级 */
+.popup-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 82%;
+  background: #fff;
+  border-radius: 30rpx;
+  padding: 50rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 999;
+}
+.popup-title {
+  font-size: 42rpx;
+  color: #443322;
+  margin-bottom: 40rpx;
+}
+.input-wrap {
+  width: 100%;
+  margin-bottom: 30rpx;
+}
+.label {
+  font-size: 32rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+  display: block;
+}
+.input {
+  width: 100%;
+  border: 2rpx solid #eee;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 34rpx;
+}
+.popup-btn-row {
+  width: 100%;
+  display: flex;
+  gap: 30rpx;
+  margin-top: 40rpx;
+}
+.btn-cancel {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx;
+  background: #f2f2f2;
+  border-radius: 999rpx;
+  font-size: 34rpx;
+}
+.btn-sure {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx;
+  background: #ffcc22;
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 34rpx;
+}
+.bottom-btn-bar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 140rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.btn-add {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: #222;
+  color: #fff;
+  font-size: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-icon {
+  width: 60rpx;
+  height: 60rpx;
+}
+.back-top-bar {
+  padding: 20rpx 15rpx;
+  font-size: 32rpx;
+  color: #443322;
+}

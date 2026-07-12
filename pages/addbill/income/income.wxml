@@ -1,0 +1,64 @@
+<view class="page-wrap">
+  <!-- 顶部导航 -->
+  <view class="top-nav">
+  <text class="cancel" bindtap="wx.navigateBack">取消</text>
+  <view class="tab-wrap">
+    <text class="tab-item out-tab" bindtap="goOutBill">支出</text>
+    <text class="tab-item in-tab active">收入</text>
+  </view>
+  <text class="done-btn" bindtap="saveIncome">完成</text>
+</view>
+
+  <!-- 收入金额展示 -->
+  <view class="money-wrap">
+    <text class="money-prefix">¥</text>
+    <text class="money-num">{{incomeMoney}}</text>
+  </view>
+
+  <!-- 收入分类图标 -->
+  <view class="cate-grid">
+    <view class="cate-item" wx:for="{{incomeCateList}}" wx:key="id" bindtap="selectCate" data-index="{{index}}">
+      <view class="cate-icon {{curCateIndex == index ? 'active' : ''}}">
+        <image src="{{item.img}}" mode="aspectFit"></image>
+      </view>
+      <text class="cate-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 备注 + 日期 -->
+  <view class="input-date-row">
+    <input class="remark-input" placeholder="点击写备注..." bindinput="inputRemark" value="{{remark}}"/>
+    <view class="date-box" bindtap="openDatePicker">
+      <text>{{showDate}}</text>
+      <image src="/images/icon_calendar.png" class="cal-icon"></image>
+    </view>
+  </view>
+
+  <!-- 数字键盘 -->
+  <view class="keyboard-wrap">
+    <view class="key-row">
+      <view class="key-num" bindtap="inputNum" data-num="7">7</view>
+      <view class="key-num" bindtap="inputNum" data-num="8">8</view>
+      <view class="key-num" bindtap="inputNum" data-num="9">9</view>
+      <view class="key-del" bindtap="delNum">⌫</view>
+    </view>
+    <view class="key-row">
+      <view class="key-num" bindtap="inputNum" data-num="4">4</view>
+      <view class="key-num" bindtap="inputNum" data-num="5">5</view>
+      <view class="key-num" bindtap="inputNum" data-num="6">6</view>
+      <view class="key-num" bindtap="inputNum" data-num="+">+</view>
+    </view>
+    <view class="key-row">
+      <view class="key-num" bindtap="inputNum" data-num="1">1</view>
+      <view class="key-num" bindtap="inputNum" data-num="2">2</view>
+      <view class="key-num" bindtap="inputNum" data-num="3">3</view>
+      <view class="key-num" bindtap="inputNum" data-num="-">-</view>
+    </view>
+    <view class="key-row">
+      <view class="key-num dot" bindtap="inputNum" data-num=".">.</view>
+      <view class="key-num zero" bindtap="inputNum" data-num="0">0</view>
+      <view class="key-finish" bindtap="saveIncome">完成</view>
+    </view>
+  </view>
+
+</view>

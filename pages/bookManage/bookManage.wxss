@@ -1,0 +1,362 @@
+/* pages/bookManage/bookManage.wxss */
+page {
+  background: #fff9e8;
+  padding: 0;
+  margin: 0;
+}
+.page-wrap {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+
+/* ========= 统计概览 ========= */
+.stat-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+.stat-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0,0,0,0.04);
+}
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+.stat-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #222;
+}
+.stat-value.default { color: #d4a828; }
+.stat-value.expense { color: #d65a2c; }
+
+/* ========= 列表头部 ========= */
+.list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+.list-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #222;
+}
+.add-book-btn {
+  background: linear-gradient(135deg, #ffc860, #ffa000);
+  color: #fff;
+  padding: 14rpx 28rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/* ========= 账本列表 ========= */
+.book-list {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 12rpx 0;
+  box-shadow: 0 4rpx 14rpx rgba(0,0,0,0.04);
+}
+.book-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 28rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.book-item:last-child { border-bottom: none; }
+.book-item.default-book { background: #fffdf5; }
+
+.book-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
+  min-width: 0;
+}
+.book-icon {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+.book-info {
+  flex: 1;
+  min-width: 0;
+}
+.book-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+.book-name {
+  font-size: 32rpx;
+  color: #222;
+  font-weight: 500;
+}
+.default-tag {
+  background: #ffdd99;
+  color: #b37400;
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+.book-meta {
+  display: flex;
+  gap: 20rpx;
+  font-size: 24rpx;
+  color: #aaa;
+}
+.book-right {
+  display: flex;
+  align-items: center;
+}
+.operate-btn {
+  font-size: 40rpx;
+  color: #bbb;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========= 空状态 ========= */
+.empty-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 0;
+  background: #fff;
+  border-radius: 28rpx;
+}
+.empty-emoji { font-size: 80rpx; margin-bottom: 16rpx; opacity: 0.5; }
+.empty-title { font-size: 28rpx; color: #888; }
+.empty-desc { font-size: 24rpx; color: #bbb; margin-top: 8rpx; }
+
+/* ========= 弹窗通用 ========= */
+.popup-wrap {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 9999;
+}
+.popup-mask {
+  position: absolute;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+}
+.popup-box {
+  position: absolute;
+  width: 86%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 36rpx;
+  padding: 44rpx 36rpx;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.popup-title {
+  font-size: 40rpx;
+  text-align: center;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 40rpx;
+}
+
+/* 输入区 */
+.input-wrap { margin-bottom: 36rpx; }
+.label {
+  font-size: 30rpx;
+  color: #444;
+  margin-bottom: 16rpx;
+  display: block;
+}
+.input {
+  width: 100%;
+  background: #f7f7f7;
+  border: none;
+  border-radius: 20rpx;
+  padding: 30rpx 28rpx;
+  min-height: 100rpx;
+  font-size: 30rpx;
+  box-sizing: border-box;
+  color: #333;
+}
+input::placeholder { color: #bbb; font-size: 28rpx; }
+
+/* 颜色/图标选择 */
+.color-wrap, .icon-wrap { margin-bottom: 36rpx; }
+.color-row, .icon-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.color-block {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  border: 4rpx solid transparent;
+  box-sizing: border-box;
+}
+.color-block.active { border-color: #ffcc22; transform: scale(1.1); }
+
+.icon-block {
+  width: 64rpx;
+  height: 64rpx;
+  background: #f7f7f7;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  border: 4rpx solid transparent;
+  box-sizing: border-box;
+}
+.icon-block.active { border-color: #ffcc22; }
+
+/* 默认勾选 */
+.check-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 44rpx;
+  font-size: 30rpx;
+  color: #444;
+}
+.checkbox {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2rpx solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: #fff;
+  transition: all 0.2s;
+}
+.checkbox.checked {
+  background: #ffc860;
+  border-color: #ffc860;
+}
+
+/* 弹窗按钮 */
+.popup-btn-row {
+  display: flex;
+  gap: 20rpx;
+}
+.btn-cancel {
+  flex: 1;
+  text-align: center;
+  padding: 26rpx;
+  background: #f2f2f2;
+  border-radius: 999rpx;
+  font-size: 32rpx;
+  color: #555;
+}
+.btn-sure {
+  flex: 1;
+  text-align: center;
+  padding: 26rpx;
+  background: linear-gradient(135deg, #ffc860, #ffa000);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+/* ========= 操作菜单弹窗 ========= */
+.operate-popup {
+  position: absolute;
+  width: 84%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 28rpx;
+  overflow: hidden;
+}
+.operate-header {
+  text-align: center;
+  padding: 28rpx 0 16rpx;
+  font-size: 28rpx;
+  color: #999;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.operate-item {
+  padding: 30rpx;
+  text-align: center;
+  font-size: 32rpx;
+  color: #333;
+}
+.operate-item.line { border-top: 1rpx solid #f0f0f0; }
+.operate-item.del { color: #e64340; border-top: 1rpx solid #f0f0f0; }
+.operate-cancel {
+  padding: 30rpx;
+  text-align: center;
+  font-size: 32rpx;
+  background: #f8f8f8;
+  color: #666;
+  margin-top: 12rpx;
+}
+
+/* ========= 删除确认弹窗 ========= */
+.confirm-box {
+  position: absolute;
+  width: 76%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 44rpx 36rpx;
+  text-align: center;
+}
+.confirm-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #222;
+  display: block;
+  margin-bottom: 16rpx;
+}
+.confirm-desc {
+  font-size: 26rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 36rpx;
+}
+.confirm-btns {
+  display: flex;
+  gap: 20rpx;
+}
+.btn-danger {
+  flex: 1;
+  text-align: center;
+  padding: 26rpx;
+  background: #e64340;
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 32rpx;
+}

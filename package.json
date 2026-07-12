@@ -1,0 +1,15 @@
+{
+  "name": "account-book-app",
+  "version": "1.0.0",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@qiun/wx-ucharts": "^2.5.0-20230101"
+  }
+}

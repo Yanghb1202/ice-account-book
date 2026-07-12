@@ -1,0 +1,135 @@
+<!-- pages/index/index.wxml -->
+<view class="page-wrap">
+  <!-- 顶部欢迎区 -->
+  <view class="header-section">
+    <view>
+      <text class="hello-text">{{greeting}}，冰冰</text>
+      <text class="sub-text">{{slogan}}</text>
+    </view>
+    <view class="avatar-box">🐾</view>
+  </view>
+
+  <!-- 本月收支主卡 -->
+  <view class="money-card">
+    <view class="card-top">
+      <view>
+        <text class="card-label">本月支出</text>
+        <view class="pay-row">
+          <text class="money-symbol">¥</text>
+          <text class="pay-num">{{monthPay}}</text>
+        </view>
+      </view>
+      <view class="detail-btn" bindtap="goStatistics">分析 ›</view>
+    </view>
+
+    <view class="money-grid">
+      <view class="money-grid-item">
+        <text class="grid-label">本月收入</text>
+        <text class="grid-value income">¥{{monthIncome}}</text>
+      </view>
+      <view class="money-grid-item">
+        <text class="grid-label">本月结余</text>
+        <text class="grid-value">¥{{monthSurplus}}</text>
+      </view>
+      <view class="money-grid-item">
+        <text class="grid-label">记账笔数</text>
+        <text class="grid-value">{{monthBillCount}} 笔</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日概览 -->
+  <view class="today-row">
+    <view class="today-card">
+      <text class="today-label">今日支出</text>
+      <text class="today-value expense">¥{{todayPay}}</text>
+    </view>
+    <view class="today-card">
+      <text class="today-label">今日收入</text>
+      <text class="today-value income">¥{{todayIncome}}</text>
+    </view>
+    <view class="today-card">
+      <text class="today-label">今日结余</text>
+      <text class="today-value">¥{{todayNet}}</text>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="section-card">
+    <view class="section-head">
+      <text class="section-title">常用功能</text>
+      <text class="section-more">管理</text>
+    </view>
+    <view class="func-row">
+      <view class="func-item" wx:for="{{funcList}}" wx:key="name" bindtap="goPage" data-url="{{item.page}}">
+        <view class="func-icon">{{item.icon}}</view>
+        <text class="func-name">{{item.name}}</text>
+        <text class="func-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预算提醒 -->
+  <view class="section-card budget-card" bindtap="goBudget">
+    <view class="section-head">
+      <text class="section-title">预算提醒</text>
+      <text class="section-more">详情 ›</text>
+    </view>
+    <view class="budget-info">
+      <view>
+        <text class="budget-main">剩余 ¥{{budgetLeft}}</text>
+        <text class="budget-desc">已用 ¥{{budgetUsed}} / 总预算 ¥{{budgetTotal}}</text>
+      </view>
+      <text class="budget-percent">{{budgetPercent}}%</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-inner budget-inner" style="width:{{budgetWidth}}"></view>
+    </view>
+  </view>
+
+  <!-- 存钱挑战 -->
+  <view class="section-card save-box" bindtap="goSavePage">
+    <view class="section-head">
+      <text class="section-title">存钱挑战</text>
+      <text class="section-more">去看看 ›</text>
+    </view>
+    <view class="save-content">
+      <view class="save-icon">🐶</view>
+      <view class="save-info">
+        <text class="plan-name">365天存钱计划</text>
+        <text class="plan-desc">已存 ¥{{saveNow}} / ¥{{saveTarget}}</text>
+        <view class="progress-bar">
+          <view class="progress-inner" style="width:{{progressWidth}}"></view>
+          <text class="progress-text">{{savePercent}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 近7日账单 -->
+  <view class="section-card bill-box">
+    <view class="section-head">
+      <text class="section-title">近7日账单</text>
+      <text class="section-more" bindtap="goBillList">更多 ›</text>
+    </view>
+
+    <view class="bill-item" wx:for="{{weekBillList}}" wx:key="id" bindtap="goBillDetail" data-id="{{item.id}}">
+      <view class="bill-icon">{{item.emoji}}</view>
+      <view class="bill-text">
+        <text class="bill-name">{{item.cateName}}</text>
+        <text class="bill-desc">{{item.remarkText}} · {{item.date}}</text>
+      </view>
+      <text class="bill-money {{item.type == 0 ? 'expense' : 'income'}}">
+        {{item.type == 0 ? '-' : '+'}}¥{{item.moneyText}}
+      </text>
+    </view>
+
+    <view wx:if="{{weekBillList.length == 0}}" class="empty-bill-tip">
+      <text class="empty-emoji">🧾</text>
+      <text class="empty-title">近7天暂无账单记录</text>
+      <text class="empty-desc">点击下方按钮开始记第一笔吧</text>
+    </view>
+  </view>
+
+  
+</view>

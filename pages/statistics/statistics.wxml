@@ -1,0 +1,147 @@
+<!--pages/statistics/statistics.wxml-->
+<view class="page-wrap">
+
+<!-- 自定义导航 -->
+<view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+  <view class="nav-row" style="height: {{navBarHeight}}px;">
+    <text class="nav-title">统计</text>
+  </view>
+</view>
+<view class="nav-placeholder" style="height: calc({{statusBarHeight}}px + {{navBarHeight}}px);"></view>
+
+<!-- 顶部 支出/收入 Tab -->
+<view class="top-tab-outin">
+  <view class="tab-item {{billType==0?'active':''}}" bindtap="switchOutIn" data-type="0">支出</view>
+  <view class="tab-item {{billType==1?'active':''}}" bindtap="switchOutIn" data-type="1">收入</view>
+</view>
+
+<!-- 周/月/年/自定义 Tab -->
+<view class="time-tab-wrap">
+  <view class="time-tab-item {{timeType==0?'active':''}}" bindtap="switchTime" data-type="0">周</view>
+  <view class="time-tab-item {{timeType==1?'active':''}}" bindtap="switchTime" data-type="1">月</view>
+  <view class="time-tab-item {{timeType==2?'active':''}}" bindtap="switchTime" data-type="2">年</view>
+  <view class="time-tab-item {{timeType==3?'active':''}}" bindtap="switchTime" data-type="3">自定义</view>
+</view>
+
+<!-- 周期切换 -->
+<view class="month-select" wx:if="{{timeType !== 3}}">
+  <text class="arrow" bindtap="prevPeriod">‹</text>
+  <text class="month-text">{{titleText}}</text>
+  <text class="arrow" bindtap="nextPeriod">›</text>
+</view>
+<view class="custom-range" wx:else>
+  <picker mode="date" value="{{customStart}}" bindchange="bindCustomStart">
+    <view class="range-pill">{{customStart || '开始日期'}}</view>
+  </picker>
+  <text class="range-sep">至</text>
+  <picker mode="date" value="{{customEnd}}" bindchange="bindCustomEnd">
+    <view class="range-pill">{{customEnd || '结束日期'}}</view>
+  </picker>
+</view>
+
+<!-- 总金额区域 -->
+<view class="total-block">
+  <view class="total-left">
+    <text class="total-title">{{billType==0?'总支出':'总收入'}}</text>
+    <text class="total-money">¥{{totalExp}}</text>
+    <text class="day-avg">日均{{billType==0?'支出':'收入'}} ¥{{dayAvgExp}}</text>
+  </view>
+  <view class="total-right" bindtap="goCompare">
+    <text class="compare-label">环比</text>
+    <text class="compare-rate {{compareUp?'up':'down'}}">{{compareRate}}</text>
+    <text class="arrow-right">›</text>
+  </view>
+</view>
+
+<!-- 小卡片：笔数 / 单笔最高 / 单日最高 -->
+<view class="mini-cards">
+  <view class="mini-card">
+    <text class="mini-label">记账笔数</text>
+    <text class="mini-value">{{billCount}}</text>
+    <text class="mini-unit">笔</text>
+  </view>
+  <view class="mini-card">
+    <text class="mini-label">单笔最高</text>
+    <text class="mini-value">¥{{maxSingle}}</text>
+    <text class="mini-desc">{{maxSingleDesc}}</text>
+  </view>
+  <view class="mini-card">
+    <text class="mini-label">单日最高</text>
+    <text class="mini-value">¥{{maxDay}}</text>
+    <text class="mini-desc">{{maxDayDesc}}</text>
+  </view>
+</view>
+
+<!-- 折线图 / 柱图 -->
+<view class="chart-card" wx:if="{{totalRaw > 0}}">
+  <view class="card-title">
+    <text>{{billType==0?'支出':'收入'}}趋势</text>
+  </view>
+  <view class="line-chart-box">
+    <qiun-data-charts
+      type="{{chartType}}"
+      chart-data="{{lineChartData}}"
+      opts="{{lineOpts}}"
+      style="width:100%;height:100%;"
+    />
+  </view>
+</view>
+
+<!-- 占比 -->
+<view wx:if="{{totalRaw > 0}}" class="pie-section chart-card">
+  <view class="pie-title-row">
+    <text class="pie-title">{{billType==0?'支出占比':'收入占比'}}</text>
+    <text class="more-btn" bindtap="goMore">更多 ›</text>
+  </view>
+
+  <view class="top-cate-bar" wx:if="{{topCate}}">
+    <view class="top-dot" style="background:{{topCate.color}}"></view>
+    <text class="top-text">本期最大类目：<text class="top-name">{{topCate.name}}</text> 占 {{topCate.percent}}</text>
+  </view>
+
+  <view class="pie-row">
+    <view class="pie-chart-box">
+      <qiun-data-charts
+        type="ring"
+        chart-data="{{ringChartData}}"
+        opts="{{ringOpts}}"
+        style="width:100%;height:100%;"
+      />
+    </view>
+    <view class="cate-list">
+      <view class="cate-line" wx:for="{{catePercentList}}" wx:key="name">
+        <view class="cate-dot" style="background:{{item.color}}"></view>
+        <text class="cate-name">{{item.name}}</text>
+        <text class="cate-percent">{{item.percent}}</text>
+        <text class="cate-money">¥{{item.money}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 最近账单 -->
+<view class="chart-card" wx:if="{{recentBills.length > 0}}">
+  <view class="card-title">
+    <text>最近 {{recentBills.length}} 笔记录</text>
+  </view>
+  <view class="bill-list">
+    <view class="bill-item" wx:for="{{recentBills}}" wx:key="id" bindtap="goBillDetail" data-id="{{item.id}}">
+      <view class="bill-emoji">{{item.emoji}}</view>
+      <view class="bill-info">
+        <text class="bill-remark">{{item.remark}}</text>
+        <text class="bill-date">{{item.cateName}} · {{item.date}}</text>
+      </view>
+      <text class="bill-money {{billType==0?'expense':'income'}}">{{billType==0?'-':'+'}}¥{{item.money}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 空状态 -->
+<view class="empty-block" wx:if="{{totalRaw <= 0}}">
+  <view class="empty-emoji">📊</view>
+  <text class="empty-title">本周期还没有{{billType==0?'支出':'收入'}}记录</text>
+  <text class="empty-desc">快去「记一笔」添加吧～</text>
+</view>
+
+<view class="bottom-gap"></view>
+</view>

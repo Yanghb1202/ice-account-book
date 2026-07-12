@@ -1,0 +1,44 @@
+<!-- pages/login/login.wxml -->
+<view class="page-wrap">
+  <view class="brand-section">
+    <view class="logo-box">🐱</view>
+    <text class="title">欢迎回来</text>
+    <text class="subtitle">登录后继续管理你的每一笔账</text>
+  </view>
+
+  <view class="form-card">
+    <view class="account-tip">
+      <text>当前本地已注册 {{accountCount}} 个账号</text>
+    </view>
+
+    <view class="input-item">
+      <text class="input-icon">📱</text>
+      <input class="input" placeholder="请输入手机号" type="number" maxlength="11" bindinput="inputPhone" value="{{phone}}" />
+    </view>
+
+    <view class="input-item">
+      <text class="input-icon">🔒</text>
+      <input class="input" placeholder="请输入密码" password="{{!showPwd}}" bindinput="inputPwd" value="{{pwd}}" />
+      <text class="eye-btn" bindtap="togglePwd">{{showPwd?'隐藏':'显示'}}</text>
+    </view>
+
+    <view class="tool-row">
+      <view class="remember-box" bindtap="toggleRemember">
+        <view class="check-box {{rememberPhone?'checked':''}}">
+          <text wx:if="{{rememberPhone}}">✓</text>
+        </view>
+        <text>记住手机号</text>
+      </view>
+      <text class="forget-text" bindtap="goForget">忘记密码？</text>
+    </view>
+
+    <button class="main-btn" bindtap="doLogin">登录</button>
+
+    <view class="demo-btn" bindtap="quickLoginDemo">使用测试账号</view>
+
+    <view class="bottom-link">
+      <text>还没有账号？</text>
+      <text class="link-text" bindtap="goRegister">去注册</text>
+    </view>
+  </view>
+</view>

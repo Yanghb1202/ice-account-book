@@ -1,0 +1,144 @@
+<!--pages/saveChallenge/saveChallenge.wxml-->
+<view class="page-wrap">
+  <!-- 顶部返回栏 -->
+  <view class="top-header">
+    <text class="back-btn" bindtap="goBack">← 返回</text>
+    <text class="page-title">365天存钱计划</text>
+    <text class="reset-btn" bindtap="resetChallenge">重置</text>
+  </view>
+
+  <!-- 存钱进度主卡片 -->
+  <view class="save-card {{completed?'completed':''}}">
+    <view class="card-left">
+      <view class="dog-avatar">🐶</view>
+      <text class="complete-tag" wx:if="{{completed}}">已完成</text>
+    </view>
+    <view class="card-right">
+      <view class="plan-row">
+        <text class="plan-name">365天存钱计划</text>
+        <text class="edit-target" bindtap="openTargetPop">改目标</text>
+      </view>
+      <view class="money-row">
+        <text class="money-text">已存 ¥{{saveMoney}}</text>
+        <text class="percent-num">{{progressPercent}}%</text>
+      </view>
+      <view class="progress-line-wrap">
+        <view class="progress-bg">
+          <view class="progress-fill" style="width:{{progressWidth}}"></view>
+          <view class="progress-dot" style="left:{{progressWidth}}"></view>
+        </view>
+      </view>
+      <text class="target-text">目标 ¥{{targetMoney}} · 还差 ¥{{leftMoney}}</text>
+    </view>
+  </view>
+
+  <!-- 小统计 -->
+  <view class="mini-stat-row">
+    <view class="mini-stat">
+      <text class="mini-label">今日已存</text>
+      <text class="mini-value">¥{{todaySaved}}</text>
+    </view>
+    <view class="mini-stat">
+      <text class="mini-label">存钱次数</text>
+      <text class="mini-value">{{recordCount}} 笔</text>
+    </view>
+    <view class="mini-stat">
+      <text class="mini-label">剩余金额</text>
+      <text class="mini-value">¥{{leftMoney}}</text>
+    </view>
+  </view>
+
+  <!-- 存钱小提示 -->
+  <view class="tip-card">
+    <text class="tip-title">存钱小 Tips</text>
+    <text class="tip-desc">每天存一笔小钱,哪怕只有 1 元,日积月累也能完成目标。建议把奶茶、零食省下的钱存进这里。</text>
+  </view>
+
+  <!-- 今日存入模块 -->
+  <view class="input-card">
+    <view class="input-head">
+      <text class="input-title">今日存入金额</text>
+      <text class="clear-btn" bindtap="clearNum">清空</text>
+    </view>
+    <view class="show-money-row">
+      <text class="yuan">¥</text>
+      <text class="num">{{inputNow}}</text>
+    </view>
+
+    <!-- 快捷金额 -->
+    <view class="quick-row">
+      <text
+        class="quick-item"
+        wx:for="{{quickList}}"
+        wx:key="*this"
+        data-money="{{item}}"
+        bindtap="addQuick"
+      >+{{item}}</text>
+    </view>
+
+    <!-- 数字键盘 -->
+    <view class="keyboard-wrap">
+      <view class="key-row">
+        <view class="key-num" bindtap="inputNum" data-num="1">1</view>
+        <view class="key-num" bindtap="inputNum" data-num="2">2</view>
+        <view class="key-num" bindtap="inputNum" data-num="3">3</view>
+        <view class="key-del" bindtap="delNum">⌫</view>
+      </view>
+      <view class="key-row">
+        <view class="key-num" bindtap="inputNum" data-num="4">4</view>
+        <view class="key-num" bindtap="inputNum" data-num="5">5</view>
+        <view class="key-num" bindtap="inputNum" data-num="6">6</view>
+        <view class="key-empty"></view>
+      </view>
+      <view class="key-row">
+        <view class="key-num" bindtap="inputNum" data-num="7">7</view>
+        <view class="key-num" bindtap="inputNum" data-num="8">8</view>
+        <view class="key-num" bindtap="inputNum" data-num="9">9</view>
+        <view class="key-empty"></view>
+      </view>
+      <view class="key-row">
+        <view class="key-num dot" bindtap="inputNum" data-num=".">.</view>
+        <view class="key-num zero" bindtap="inputNum" data-num="0">0</view>
+        <view class="key-finish" bindtap="addSaveMoney">存入小金库</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史存入记录 -->
+  <view class="record-card">
+    <view class="record-top">
+      <text class="record-title">存入流水</text>
+      <text class="record-count">共 {{recordList.length}} 笔</text>
+    </view>
+
+    <view class="record-item" wx:for="{{recordList}}" wx:key="id">
+      <view class="record-left">
+        <view class="record-dot">💰</view>
+        <view>
+          <text class="record-date">{{item.date}}</text>
+          <text class="record-time">{{item.time || '今日'}}</text>
+        </view>
+      </view>
+      <view class="record-right">
+        <text class="record-value">+¥{{item.money}}</text>
+        <text class="record-del" bindtap="deleteRecord" data-id="{{item.id}}">删除</text>
+      </view>
+    </view>
+
+    <view wx:if="{{recordList.length == 0}}" class="empty-record">
+      <text class="empty-icon">🐾</text>
+      <text>暂无存钱记录,今天开启第一笔储蓄吧～</text>
+    </view>
+  </view>
+
+  <!-- 修改目标弹窗 -->
+  <view class="mask" wx:if="{{showTargetPop}}" bindtap="closeTargetPop"></view>
+  <view class="target-pop" wx:if="{{showTargetPop}}">
+    <text class="pop-title">修改目标金额</text>
+    <input class="target-input" type="digit" value="{{tempTarget}}" bindinput="inputTarget" placeholder="请输入目标金额" />
+    <view class="pop-btn-row">
+      <view class="btn-cancel" bindtap="closeTargetPop">取消</view>
+      <view class="btn-confirm" bindtap="saveTarget">保存</view>
+    </view>
+  </view>
+</view>

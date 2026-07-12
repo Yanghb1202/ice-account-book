@@ -1,0 +1,110 @@
+page {
+  background: #fff9e6;
+  padding: 40rpx 30rpx;
+}
+.page-wrap {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 顶部小猫装饰 */
+.top-cat {
+  text-align: center;
+  margin-bottom: 40rpx;
+}
+.cat-img {
+  width: 160rpx;
+  height: 160rpx;
+}
+
+/* 金额卡片 */
+.money-card {
+  border-radius: 36rpx;
+  padding: 60rpx 30rpx;
+  text-align: center;
+  margin-bottom: 40rpx;
+}
+.pay-card {
+  background: #ffe8e8;
+}
+.income-card {
+  background: #e8fff0;
+}
+.money-symbol {
+  font-size: 52rpx;
+  font-weight: bold;
+}
+.pay-card .money-symbol {
+  color: #e64340;
+}
+.income-card .money-symbol {
+  color: #07c160;
+}
+.money-num {
+  font-size: 72rpx;
+  font-weight: bold;
+  margin-left: 12rpx;
+}
+.type-text {
+  display: block;
+  font-size: 30rpx;
+  margin-top: 16rpx;
+  color: #666;
+}
+
+/* 信息卡片 */
+.info-card {
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 20rpx 0;
+  box-shadow: 0 4rpx 16rpx rgba(255, 204, 68, 0.15);
+}
+.info-item {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 36rpx;
+  border-bottom: 1rpx solid #fff2cc;
+}
+.info-item:last-child {
+  border-bottom: none;
+}
+.info-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  margin-right: 24rpx;
+}
+.info-icon.yellow {
+  background: #fff2cc;
+}
+.info-icon.orange {
+  background: #ffe9cc;
+}
+.info-icon.pink {
+  background: #ffe6f0;
+}
+.info-label {
+  flex: 1;
+  font-size: 32rpx;
+  color: #444;
+}
+.info-val {
+  font-size: 32rpx;
+  color: #777;
+}
+
+/* 返回按钮 */
+.back-btn {
+  width: 100%;
+  text-align: center;
+  background: #ffdd88;
+  border-radius: 999rpx;
+  padding: 36rpx 0;
+  margin-top: 60rpx;
+  font-size: 36rpx;
+  font-weight: 500;
+}

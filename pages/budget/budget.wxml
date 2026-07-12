@@ -1,0 +1,206 @@
+<!--pages/budget/budget.wxml-->
+<view class="page-wrap">
+
+<!-- 总预算卡片 -->
+<view class="total-card {{totalOver?'over':''}}">
+  <view class="card-top">
+    <view class="card-left">
+      <text class="card-title">本月总预算</text>
+      <text class="total-money">¥{{totalBudget}}</text>
+      <view class="progress-box">
+        <view class="progress-bg">
+          <view class="progress-bar" style="{{totalProgressStyle}};{{totalOver?'background:#e64340;':''}}"></view>
+        </view>
+        <view class="progress-meta">
+          <text class="progress-text">已花费 ¥{{usedMoney}} / 剩余 ¥{{leftMoney}}</text>
+          <text class="progress-pct" wx:if="{{totalOver}}" style="color:#e64340;">超支 {{usedPercent}}%</text>
+          <text class="progress-pct" wx:else>{{usedPercent}}%</text>
+        </view>
+      </view>
+    </view>
+    <view class="card-edit" bindtap="openSetBudget">编辑</view>
+  </view>
+
+  <!-- 每日概览 -->
+  <view class="daily-row">
+    <view class="daily-item">
+      <text class="daily-label">本月天数</text>
+      <text class="daily-value">{{monthDays}}天</text>
+    </view>
+    <view class="daily-item">
+      <text class="daily-label">剩余天数</text>
+      <text class="daily-value">{{leftDays}}天</text>
+    </view>
+    <view class="daily-item">
+      <text class="daily-label">日均已用</text>
+      <text class="daily-value">¥{{avgDaily}}</text>
+    </view>
+    <view class="daily-item">
+      <text class="daily-label">日均余量</text>
+      <text class="daily-value">¥{{dailyBudget}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 超标警告 -->
+<view class="warn-banner" wx:if="{{totalOver}}">
+  <text class="warn-icon">⚠️</text>
+  <text class="warn-text">总预算已超支 {{usedPercent}}%，注意控制开支哦~</text>
+</view>
+
+<!-- 分类预算标题 + 操作 -->
+<view class="list-header">
+  <text class="list-title">分类预算</text>
+  <view class="list-actions">
+    <text class="list-action" bindtap="resetAll">重置</text>
+  </view>
+</view>
+
+<!-- 分类列表 -->
+<view class="budget-list" wx:if="{{budgetList.length > 0}}">
+  <view
+    class="budget-item {{item.over?'over':''}}"
+    wx:for="{{budgetList}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+  >
+    <!-- 删除按钮 -->
+    <view class="delete-area" bindtap="deleteItem" data-id="{{item.id}}">
+      <text class="delete-icon">✕</text>
+    </view>
+
+    <view class="item-main" bindtap="editItemBudget" data-id="{{item.id}}">
+      <view class="item-icon" style="background:{{item.color}}">
+        <text>{{item.icon}}</text>
+      </view>
+      <view class="item-info">
+        <view class="item-name-row">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-pct {{item.over?'over':''}}">{{item.percent}}%</text>
+        </view>
+        <view class="item-progress">
+          <view class="item-pro-bg">
+            <view class="item-pro-bar" style="{{item.barStyle}};{{item.over?'background:#e64340;':''}}"></view>
+          </view>
+        </view>
+        <view class="item-num-row">
+          <text>已用 ¥{{item.used}} / ¥{{item.total}}</text>
+          <text wx:if="{{item.over}}" style="color:#e64340;">超 {{item.total > 0 ? (Math.round((item.used-item.total)*100)/100) : item.used}}</text>
+          <text wx:else>剩余 ¥{{item.remain}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 空状态 -->
+<view class="empty-block" wx:if="{{budgetList.length === 0}}">
+  <view class="empty-emoji">📋</view>
+  <text class="empty-title">还没有分类预算</text>
+  <text class="empty-desc">点击下方按钮添加吧~</text>
+</view>
+
+<!-- 添加按钮 -->
+<view class="add-btn" bindtap="openAddBudget">
+  <text>+ 添加分类预算</text>
+</view>
+
+<!-- ==================== 弹窗 ==================== -->
+
+<!-- 弹窗1：设置总预算 -->
+<view class="mask" wx:if="{{showTotalPop}}" bindtap="closeAllPop"></view>
+<view class="pop-box" wx:if="{{showTotalPop}}">
+  <text class="pop-title">设置本月总预算</text>
+  <input class="pop-input" placeholder="输入总预算金额" value="{{tempBudget}}" bindinput="inputTempBudget" type="digit" />
+  <view class="pop-hint">当前分类预算总额会自动按比例调整</view>
+  <view class="pop-btns">
+    <button class="btn-cancel" bindtap="closeAllPop">取消</button>
+    <button class="btn-confirm" bindtap="saveTotalBudget">确定</button>
+  </view>
+</view>
+
+<!-- 弹窗2：编辑分类预算 -->
+<view class="mask" wx:if="{{showEditItemPop}}" bindtap="closeAllPop"></view>
+<view class="pop-box" wx:if="{{showEditItemPop}}">
+  <text class="pop-title">修改分类预算</text>
+  <view class="pop-field">
+    <text class="pop-field-label">总预算</text>
+    <input class="pop-input" placeholder="填写新总额" value="{{tempItemTotal}}" bindinput="inputItemTotal" type="digit" />
+  </view>
+  <view class="pop-field">
+    <text class="pop-field-label">已花费（只读）</text>
+    <input class="pop-input" placeholder="目前已花费" value="{{tempItemUsed}}" disabled type="digit" />
+  </view>
+  <view class="pop-btns">
+    <button class="btn-cancel" bindtap="closeAllPop">取消</button>
+    <button class="btn-confirm" bindtap="saveItemEdit">保存</button>
+  </view>
+</view>
+
+<!-- 弹窗3：新增分类 -->
+<view class="mask" wx:if="{{showAddPop}}" bindtap="closeAllPop"></view>
+<view class="pop-box" wx:if="{{showAddPop}}">
+  <text class="pop-title">新增分类预算</text>
+
+  <view class="pop-field">
+    <text class="pop-field-label">分类名称</text>
+    <input class="pop-input" placeholder="如：奶茶零食" value="{{newCatName}}" bindinput="inputCatName" maxlength="10" />
+  </view>
+
+  <view class="pop-field">
+    <text class="pop-field-label">分类图标</text>
+    <view class="icon-selector" bindtap="openIconPicker">
+      <view class="icon-preview" style="background:{{newCatColor}}"><text>{{newCatIcon}}</text></view>
+      <text class="icon-select-text">点击选择</text>
+    </view>
+  </view>
+
+  <view class="pop-field">
+    <text class="pop-field-label">分类颜色</text>
+    <scroll-view class="color-row" scroll-x="true" scroll-with-animation>
+      <view
+        class="color-dot {{newCatColor===item?'active':''}}"
+        wx:for="{{colorList}}"
+        wx:key="*this"
+        style="background:{{item}}"
+        bindtap="selectColor"
+        data-color="{{item}}"
+      ></view>
+    </scroll-view>
+  </view>
+
+  <view class="pop-field">
+    <text class="pop-field-label">预算金额</text>
+    <input class="pop-input" placeholder="输入预算金额" value="{{newCatTotal}}" bindinput="inputCatTotal" type="digit" />
+  </view>
+
+  <view class="pop-btns">
+    <button class="btn-cancel" bindtap="closeAllPop">取消</button>
+    <button class="btn-confirm" bindtap="confirmAddCat">添加</button>
+  </view>
+</view>
+
+<!-- 图标选择浮层 -->
+<view class="mask" wx:if="{{showIconPicker}}" bindtap="closeAllPop"></view>
+<view class="icon-picker-box" wx:if="{{showIconPicker}}">
+  <text class="picker-title">选择图标</text>
+  <view class="icon-grid">
+    <view class="icon-grid-item" wx:for="{{iconList}}" wx:key="*this" bindtap="selectIcon" data-icon="{{item}}">
+      <text>{{item}}</text>
+    </view>
+  </view>
+  <button class="btn-cancel" bindtap="closeAllPop" style="margin-top:24rpx;">关闭</button>
+</view>
+
+<!-- 删除确认弹窗 -->
+<view class="mask" wx:if="{{deleteConfirmId}}" bindtap="closeAllPop"></view>
+<view class="pop-box confirm-box" wx:if="{{deleteConfirmId}}">
+  <text class="pop-title">确认删除？</text>
+  <text class="confirm-desc">删除后该分类的预算数据将丢失</text>
+  <view class="pop-btns">
+    <button class="btn-cancel" bindtap="closeAllPop">取消</button>
+    <button class="btn-confirm danger" bindtap="confirmDelete">删除</button>
+  </view>
+</view>
+
+</view>

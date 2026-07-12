@@ -1,0 +1,142 @@
+<!--pages/feedback/feedback.wxml-->
+<view class="page-wrap">
+  <!-- 顶部标题 -->
+  <view class="top-card">
+    <view class="top-icon">💌</view>
+    <view class="top-text">
+      <text class="title-text">帮助与反馈</text>
+      <text class="desc-text">遇到问题或有新想法,都可以告诉我~</text>
+    </view>
+  </view>
+
+  <!-- 快速联系 -->
+  <view class="contact-card" bindtap="copyEmail">
+    <view>
+      <text class="contact-title">联系邮箱</text>
+      <text class="contact-desc">bingbing-book@example.com</text>
+    </view>
+    <text class="contact-action">复制 ›</text>
+  </view>
+
+  <!-- 常见问题卡片 -->
+  <view class="card-box">
+    <view class="card-head">
+      <text class="head-icon">❓</text>
+      <text class="head-text">常见问题</text>
+    </view>
+    <view class="faq-list">
+      <view class="faq-item" wx:for="{{faqList}}" wx:key="q" bindtap="toggleFaq" data-index="{{index}}">
+        <view class="faq-q">
+          <text>{{item.q}}</text>
+          <text class="arrow {{faqIndex==index?'rotate':''}}">›</text>
+        </view>
+        <view wx:if="{{faqIndex==index}}" class="faq-a">
+          {{item.a}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 意见反馈卡片 -->
+  <view class="card-box">
+    <view class="card-head">
+      <text class="head-icon">📝</text>
+      <text class="head-text">提交反馈</text>
+    </view>
+
+    <!-- 反馈类型选择 -->
+    <view class="type-wrap">
+      <text class="label">反馈类型</text>
+      <view class="type-row">
+        <view
+          class="type-item {{feedType==item.id?'active':''}}"
+          wx:for="{{typeList}}"
+          wx:key="id"
+          bindtap="selectType"
+          data-t="{{item.id}}"
+        >
+          <text class="type-icon">{{item.icon}}</text>
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 文字输入框 -->
+    <view class="input-wrap">
+      <view class="label-row">
+        <text class="label">详细描述</text>
+        <text class="word-num">{{feedContent.length}}/300</text>
+      </view>
+      <textarea
+        class="text-area"
+        placeholder="请详细描述你遇到的问题、出现页面、操作步骤或优化建议..."
+        placeholder-class="placeholder"
+        bindinput="inputContent"
+        value="{{feedContent}}"
+        maxlength="300"
+      ></textarea>
+    </view>
+
+    <!-- 上传截图 -->
+    <view class="upload-wrap">
+      <text class="label">上传截图 <text class="optional">选填,最多 3 张</text></text>
+      <view class="img-row">
+        <view class="img-item" wx:for="{{imgList}}" wx:key="*this">
+          <image src="{{item}}" mode="aspectFill" bindtap="previewImg" data-url="{{item}}"></image>
+          <view class="del-img" catchtap="delImg" data-i="{{index}}">×</view>
+        </view>
+        <view class="upload-add" wx:if="{{imgList.length < 3}}" bindtap="chooseImg">
+          <text class="upload-icon">＋</text>
+          <text class="upload-tip">添加图片</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="input-wrap">
+      <text class="label">联系方式 <text class="optional">选填,方便回复你</text></text>
+      <input
+        class="input"
+        placeholder="手机号 / 微信 / 邮箱"
+        placeholder-class="placeholder"
+        bindinput="inputContact"
+        value="{{contact}}"
+      />
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-btn" bindtap="submitFeed">提交反馈</view>
+  </view>
+
+  <!-- 历史反馈 -->
+  <view class="card-box" wx:if="{{historyList.length > 0}}">
+    <view class="card-head between">
+      <view class="head-left">
+        <text class="head-icon">📮</text>
+        <text class="head-text">最近反馈</text>
+      </view>
+      <text class="clear-btn" bindtap="clearHistory">清空</text>
+    </view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{historyList}}" wx:key="id">
+        <view class="history-top">
+          <text class="history-type">{{item.typeIcon}} {{item.typeName}}</text>
+          <text class="history-status">{{item.status}}</text>
+        </view>
+        <text class="history-content">{{item.content}}</text>
+        <text class="history-time">{{item.time}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交成功弹窗 -->
+  <view wx:if="{{showPop}}" class="pop-wrap" bindtap="closePop">
+    <view class="pop-box" catchtap="noop">
+      <text class="pop-icon">✅</text>
+      <text class="pop-title">提交成功</text>
+      <text class="pop-desc">反馈已保存在本地记录中</text>
+      <text class="pop-time">{{submitTime}}</text>
+      <view class="pop-btn" bindtap="closePop">知道啦</view>
+    </view>
+  </view>
+</view>

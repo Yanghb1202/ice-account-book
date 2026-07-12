@@ -1,0 +1,354 @@
+/* pages/statistics/statistics.wxss */
+page { background: #fff9e8; }
+.page-wrap {
+  width: 100%;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  background: #fff9e8;
+  min-height: 100vh;
+}
+
+/* 自定义导航 */
+.nav-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: #fff9e8;
+  z-index: 100;
+}
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #222;
+  letter-spacing: 1rpx;
+}
+.nav-placeholder { width: 100%; }
+
+/* 顶部支出收入胶囊tab */
+.top-tab-outin {
+  display: flex;
+  width: 320rpx;
+  margin: 24rpx auto 16rpx;
+  background: #f5efe0;
+  border-radius: 999rpx;
+  padding: 6rpx;
+}
+.top-tab-outin .tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  font-size: 28rpx;
+  color: #888;
+  border-radius: 999rpx;
+  transition: all 0.2s;
+}
+.top-tab-outin .tab-item.active {
+  background: #ffffff;
+  color: #222;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+/* 周月年tab */
+.time-tab-wrap {
+  display: flex;
+  background: #f5efe0;
+  border-radius: 16rpx;
+  padding: 8rpx;
+  margin: 8rpx 6rpx;
+}
+.time-tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 14rpx 0;
+  font-size: 28rpx;
+  color: #888;
+  border-radius: 12rpx;
+  transition: all 0.2s;
+}
+.time-tab-item.active {
+  background: #fff;
+  color: #222;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+/* 周期切换 */
+.month-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 26rpx 0 12rpx;
+  font-size: 32rpx;
+  color: #333;
+}
+.month-select .arrow {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 40rpx;
+}
+.month-text {
+  font-weight: 600;
+  font-size: 30rpx;
+  margin: 0 16rpx;
+  color: #333;
+}
+.custom-range {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 24rpx 0 12rpx;
+  gap: 16rpx;
+}
+.range-pill {
+  background: #fff;
+  padding: 10rpx 24rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #555;
+  box-shadow: 0 2rpx 6rpx rgba(0,0,0,0.04);
+}
+.range-sep { font-size: 26rpx; color: #999; }
+
+/* 总金额区域 */
+.total-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 18rpx 14rpx 24rpx;
+}
+.total-left { display: flex; flex-direction: column; }
+.total-title {
+  font-size: 26rpx;
+  color: #777;
+  margin-bottom: 4rpx;
+}
+.total-money {
+  font-size: 64rpx;
+  font-weight: bold;
+  margin: 4rpx 0;
+  color: #222;
+  line-height: 1.1;
+}
+.day-avg {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 6rpx;
+}
+.total-right {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #888;
+  padding: 10rpx 18rpx;
+  background: #fff;
+  border-radius: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+.compare-label { color: #999; font-size: 24rpx; }
+.compare-rate { font-weight: 600; font-size: 26rpx; }
+.compare-rate.up { color: #d65a2c; }
+.compare-rate.down { color: #2e8b4a; }
+.total-right .arrow-right { color: #bbb; font-size: 26rpx; }
+
+/* mini cards */
+.mini-cards {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+.mini-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 18rpx;
+  padding: 22rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+  min-width: 0;
+}
+.mini-label { font-size: 22rpx; color: #999; margin-bottom: 8rpx; }
+.mini-value { font-size: 30rpx; font-weight: 700; color: #222; line-height: 1.2; }
+.mini-unit { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+.mini-desc {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-top: 4rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* 卡片通用 */
+.chart-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx 20rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0,0,0,0.04);
+}
+.card-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 14rpx;
+  padding-left: 6rpx;
+}
+
+/* 折线图尺寸 */
+.line-chart-box {
+  width: 100%;
+  height: 380rpx;
+}
+
+/* 占比标题行 */
+.pie-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.pie-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+}
+.more-btn {
+  color: #999;
+  font-size: 24rpx;
+}
+.top-cate-bar {
+  display: flex;
+  align-items: center;
+  background: #fff7d9;
+  padding: 14rpx 18rpx;
+  border-radius: 14rpx;
+  margin-bottom: 18rpx;
+}
+.top-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+.top-text { font-size: 24rpx; color: #8a6a1f; }
+.top-name { font-weight: 600; color: #5a3e0a; }
+
+/* 饼图+图例横向布局 */
+.pie-row {
+  display: flex;
+  align-items: center;
+  padding: 0 6rpx;
+}
+.pie-chart-box {
+  width: 280rpx;
+  height: 280rpx;
+  flex-shrink: 0;
+}
+.cate-list {
+  flex: 1;
+  padding-left: 20rpx;
+}
+.cate-line {
+  display: flex;
+  align-items: center;
+  margin: 18rpx 0;
+}
+.cate-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  margin-right: 14rpx;
+  flex-shrink: 0;
+}
+.cate-name {
+  width: 100rpx;
+  color: #444;
+  font-size: 26rpx;
+  flex-shrink: 0;
+}
+.cate-percent {
+  width: 70rpx;
+  text-align: right;
+  color: #888;
+  font-size: 24rpx;
+  margin-right: 14rpx;
+}
+.cate-money {
+  flex: 1;
+  text-align: right;
+  color: #222;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+/* 最近账单 */
+.bill-list { padding: 0 4rpx; }
+.bill-item {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 8rpx;
+  border-bottom: 1rpx solid #f5efe0;
+}
+.bill-item:last-child { border-bottom: none; }
+.bill-emoji {
+  width: 64rpx;
+  height: 64rpx;
+  background: #fff7d9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  margin-right: 18rpx;
+  flex-shrink: 0;
+}
+.bill-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.bill-remark {
+  font-size: 28rpx;
+  color: #222;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bill-date {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-top: 4rpx;
+}
+.bill-money {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.bill-money.expense { color: #d65a2c; }
+.bill-money.income { color: #2e8b4a; }
+
+/* 空状态 */
+.empty-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+}
+.empty-emoji { font-size: 100rpx; margin-bottom: 20rpx; opacity: 0.6; }
+.empty-title { font-size: 28rpx; color: #666; }
+.empty-desc { font-size: 24rpx; color: #aaa; margin-top: 10rpx; }
+
+.bottom-gap { height: 60rpx; }

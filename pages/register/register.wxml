@@ -1,0 +1,53 @@
+<!-- pages/register/register.wxml -->
+<view class="page-wrap">
+  <view class="brand-section">
+    <view class="logo-box">🐱</view>
+    <text class="title">创建账号</text>
+    <text class="subtitle">注册后即可登录冰冰记账本</text>
+  </view>
+
+  <view class="form-card">
+    <view class="avatar-wrap" bindtap="chooseAvatar">
+      <view class="avatar-box" wx:if="{{!avatar}}">🐾</view>
+      <image class="avatar-img" wx:else src="{{avatar}}" mode="aspectFill"></image>
+      <text class="avatar-tip">点击选择头像</text>
+    </view>
+
+    <view class="input-item">
+      <text class="input-icon">📱</text>
+      <input class="input" placeholder="请输入手机号" type="number" maxlength="11" bindinput="inputPhone" value="{{phone}}" />
+    </view>
+
+    <view class="input-item">
+      <text class="input-icon">🙂</text>
+      <input class="input" placeholder="设置昵称" maxlength="12" bindinput="inputNickname" value="{{nickname}}" />
+    </view>
+
+    <view class="input-item">
+      <text class="input-icon">🔒</text>
+      <input class="input" placeholder="设置密码,至少6位" password="{{!showPwd}}" bindinput="inputPwd" value="{{pwd}}" />
+      <text class="eye-btn" bindtap="togglePwd">{{showPwd?'隐藏':'显示'}}</text>
+    </view>
+
+    <view class="input-item">
+      <text class="input-icon">✅</text>
+      <input class="input" placeholder="再次确认密码" password="{{!showRepwd}}" bindinput="inputRepwd" value="{{repwd}}" />
+      <text class="eye-btn" bindtap="toggleRepwd">{{showRepwd?'隐藏':'显示'}}</text>
+    </view>
+
+    <view class="agree-row" bindtap="toggleAgree">
+      <view class="check-box {{agree?'checked':''}}">
+        <text wx:if="{{agree}}">✓</text>
+      </view>
+      <text class="agree-text">我已阅读并同意</text>
+      <text class="agree-link" catchtap="showAgreement">《用户协议》</text>
+    </view>
+
+    <button class="main-btn" bindtap="doRegister">注册</button>
+
+    <view class="bottom-link">
+      <text>已有账号？</text>
+      <text class="link-text" bindtap="goLogin">去登录</text>
+    </view>
+  </view>
+</view>

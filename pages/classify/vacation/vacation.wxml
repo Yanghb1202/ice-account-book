@@ -1,0 +1,59 @@
+<view class="page-wrap">
+  <view class="back-top-bar" bindtap="backAddBill">
+    <text>← 返回记一笔</text>
+  </view>
+
+  <view class="week-bar">
+    <block wx:for="{{weekList}}" wx:key="index">
+      <view class="week-item {{currentDay == item.day ? 'active' : ''}}" bindtap="selectDay" data-day="{{item.day}}">
+        <text class="week-text">{{item.week}}</text>
+        <text class="day-num">{{item.dateNum}}</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="cal-top">
+    <text class="cal-title">本周总消费(元)</text>
+    <view class="cal-num-wrap">
+      <text class="cal-num">{{totalMoney}}</text>
+    </view>
+  </view>
+
+  <view class="note-card">
+    <block wx:for="{{list}}" wx:key="id">
+      <view class="shop-item">
+        <view class="item-left">
+          <text class="shop-name">{{item.remark}}</text>
+          <text class="shop-date">{{item.date}}</text>
+        </view>
+        <text class="shop-price">¥{{item.money}}</text>
+      </view>
+    </block>
+    <view wx:if="{{list.length == 0}}" class="empty-tip">
+      <text>点击底部加号，添加旅游记录</text>
+    </view>
+  </view>
+
+  <view wx:if="{{showPopup}}" class="popup-box" catchtap="noop">
+    <text class="popup-title">新增旅游</text>
+    <view class="input-wrap">
+      <text class="label">出行名称</text>
+      <input class="input" placeholder="例：短途旅行、机票酒店" bindinput="inputName" value="{{name}}" adjust-position="{{true}}" cursor-spacing="30"/>
+    </view>
+    <view class="input-wrap">
+      <text class="label">花费金额</text>
+      <input class="input" type="digit" placeholder="输入价格" bindinput="inputPrice" value="{{price}}" adjust-position="{{true}}" cursor-spacing="30"/>
+    </view>
+    <view class="popup-btn-row">
+      <view class="btn-cancel" bindtap="closeMask">取消</view>
+      <view class="btn-sure" bindtap="saveItem">保存</view>
+    </view>
+  </view>
+  <view wx:if="{{showPopup}}" class="popup-mask" bindtap="closeMask"></view>
+
+  <view class="bottom-btn-bar">
+    <view class="btn-icon"></view>
+    <view class="btn-add" bindtap="openPopup"><text>+</text></view>
+    <view class="btn-icon"></view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "qiun-data-charts": "/miniprogram_npm/@qiun/wx-ucharts/index"
+  },
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "统计"
+}

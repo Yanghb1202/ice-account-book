@@ -1,0 +1,124 @@
+<!-- pages/asset/asset.wxml -->
+<view class="page-wrap">
+  <!-- 净资产主卡 -->
+  <view class="asset-card">
+    <view class="card-top">
+      <view>
+        <text class="card-label">当前净资产</text>
+        <view class="money-row">
+          <text class="money-symbol">¥</text>
+          <text class="main-money">{{netAsset}}</text>
+        </view>
+      </view>
+      <view class="add-btn" bindtap="openAddPopup">+ 账户</view>
+    </view>
+    <view class="asset-grid">
+      <view class="grid-item">
+        <text class="grid-label">总资产</text>
+        <text class="grid-value income">¥{{totalAsset}}</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">总负债</text>
+        <text class="grid-value expense">¥{{totalDebt}}</text>
+      </view>
+      <view class="grid-item">
+        <text class="grid-label">账户数</text>
+        <text class="grid-value">{{accountCount}} 个</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账户列表 -->
+  <view class="section-card">
+    <view class="section-head">
+      <text class="section-title">资产账户</text>
+      <text class="section-more">点击卡片可编辑</text>
+    </view>
+
+    <view
+      class="asset-item"
+      wx:for="{{assetList}}"
+      wx:key="id"
+      bindtap="editAsset"
+      data-id="{{item.id}}"
+    >
+      <view class="asset-icon" style="background:{{item.color}}">
+        <text>{{item.icon}}</text>
+      </view>
+      <view class="asset-info">
+        <view class="asset-name-row">
+          <text class="asset-name">{{item.name}}</text>
+          <text class="type-tag {{item.type==1?'debt':'asset'}}">{{item.type==1?'负债':'资产'}}</text>
+        </view>
+        <text class="asset-desc">{{item.type==1?'需要偿还':'可用余额'}}</text>
+      </view>
+      <view class="asset-right">
+        <text class="asset-money {{item.type==1?'expense':'income'}}">¥{{item.moneyText}}</text>
+        <text class="delete-text" catchtap="deleteAsset" data-id="{{item.id}}">删除</text>
+      </view>
+    </view>
+
+    <view class="empty-block" wx:if="{{assetList.length==0}}">
+      <text class="empty-icon">🏦</text>
+      <text>暂无资产账户,点击右上角新增吧</text>
+    </view>
+  </view>
+
+  <!-- 新增/编辑弹窗 -->
+  <view class="mask" wx:if="{{showPopup}}" bindtap="closePopup"></view>
+  <view class="pop-box" wx:if="{{showPopup}}" catchtap="noop">
+    <text class="pop-title">{{editId?'编辑账户':'新增账户'}}</text>
+
+    <view class="type-tab">
+      <view
+        class="type-item {{tempType==item.id?'active':''}}"
+        wx:for="{{typeList}}"
+        wx:key="id"
+        bindtap="switchType"
+        data-type="{{item.id}}"
+      >{{item.name}}</view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">账户名称</text>
+      <input class="input" value="{{tempName}}" bindinput="inputName" placeholder="如：微信钱包、银行卡" maxlength="12" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">金额</text>
+      <input class="input" value="{{tempMoney}}" bindinput="inputMoney" type="digit" placeholder="请输入金额" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">图标</text>
+      <view class="icon-row">
+        <view
+          class="icon-item {{tempIcon==item?'active':''}}"
+          wx:for="{{iconList}}"
+          wx:key="*this"
+          bindtap="selectIcon"
+          data-icon="{{item}}"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">颜色</text>
+      <view class="color-row">
+        <view
+          class="color-item {{tempColor==item?'active':''}}"
+          wx:for="{{colorList}}"
+          wx:key="*this"
+          style="background:{{item}}"
+          bindtap="selectColor"
+          data-color="{{item}}"
+        ></view>
+      </view>
+    </view>
+
+    <view class="pop-btn-row">
+      <view class="btn-cancel" bindtap="closePopup">取消</view>
+      <view class="btn-confirm" bindtap="saveAsset">保存</view>
+    </view>
+  </view>
+</view>

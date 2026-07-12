@@ -1,0 +1,156 @@
+.page-wrap {
+  background: #fcf6e6;
+  min-height: 100vh;
+  padding-bottom: 160rpx;
+}
+/* 顶部导航 */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40rpx 30rpx;
+}
+.cancel {
+  font-size: 32rpx;
+  color: #666;
+}
+.tab-wrap {
+  display: flex;
+  background: #eee;
+  border-radius: 999rpx;
+  padding: 8rpx;
+}
+.tab-item {
+  font-size: 32rpx;
+  padding: 10rpx 30rpx;
+  border-radius: 999rpx;
+}
+.in-tab.active {
+  background: #fff;
+  color: #36b37e;
+}
+.done-btn {
+  font-size: 32rpx;
+  color: #ffcc22;
+}
+/* 金额 */
+.money-wrap {
+  padding: 20rpx 30rpx;
+  display: flex;
+  align-items: baseline;
+}
+.money-prefix {
+  font-size: 60rpx;
+  color: #36b37e;
+}
+.money-num {
+  font-size: 100rpx;
+  font-weight: bold;
+  color: #222;
+}
+/* 分类网格 */
+.cate-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 20rpx;
+}
+.cate-item {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+.cate-icon {
+  width: 100rpx;
+  height: 100rpx;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cate-icon.active {
+  background: #36b37e;
+}
+.cate-icon image {
+  width: 56rpx;
+  height: 56rpx;
+}
+.cate-name {
+  font-size: 28rpx;
+  margin-top: 10rpx;
+  color: #444;
+}
+/* 备注日期 */
+.input-date-row {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #eee;
+}
+.remark-input {
+  flex: 1;
+  font-size: 34rpx;
+  color: #666;
+}
+.date-box {
+  display: flex;
+  align-items: center;
+  color: #888;
+  font-size: 30rpx;
+}
+.cal-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: 10rpx;
+}
+/* 数字键盘 */
+.keyboard-wrap {
+  margin-top: 40rpx;
+}
+.key-row {
+  display: flex;
+}
+.key-num, .key-del {
+  width: 25%;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  background: #fff;
+  border: 1rpx solid #eee;
+}
+.key-finish {
+  width: 50%;
+  height: 120rpx;
+  background: #36b37e;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+/* 底部tab */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 140rpx;
+  background: #fff;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab-bar .tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.tab-bar image {
+  width: 56rpx;
+  height: 56rpx;
+}

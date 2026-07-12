@@ -1,0 +1,62 @@
+<view class="page-wrap">
+  <!-- 返回记一笔顶部按钮 -->
+  <view class="back-top-bar" bindtap="backAddBill">
+    <text>← 返回记一笔</text>
+  </view>
+
+  <view class="week-bar">
+    <block wx:for="{{weekList}}" wx:key="index">
+      <view class="week-item {{currentDay == item.day ? 'active' : ''}}" bindtap="selectDay" data-day="{{item.day}}">
+        <text class="week-text">{{item.week}}</text>
+        <text class="day-num">{{item.dateNum}}</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="cal-top">
+    <text class="cal-title">本周总消费(元)</text>
+    <view class="cal-num-wrap">
+      <text class="cal-num">{{totalMoney}}</text>
+    </view>
+  </view>
+
+  <view class="note-card">
+    <block wx:for="{{list}}" wx:key="id">
+      <view class="shop-item">
+        <view class="item-left">
+          <text class="shop-name">{{item.remark}}</text>
+          <text class="shop-date">{{item.date}}</text>
+        </view>
+        <text class="shop-price">¥{{item.money}}</text>
+      </view>
+    </block>
+    <view wx:if="{{list.length == 0}}" class="empty-tip">
+      <text>点击底部加号，添加通讯记录</text>
+    </view>
+  </view>
+
+  <!-- 遮罩与弹窗平级分离，解决input点击关闭弹窗 -->
+  <view wx:if="{{showPopup}}" class="popup-mask" bindtap="closeMask"></view>
+  <view wx:if="{{showPopup}}" class="popup-box">
+    <text class="popup-title">新增通讯</text>
+    <view class="input-wrap">
+      <text class="label">项目名称</text>
+      <input class="input" placeholder="例：话费..." bindinput="inputName" value="{{name}}"/>
+    </view>
+    <view class="input-wrap">
+      <text class="label">花费金额</text>
+      <input class="input" type="digit" placeholder="输入价格" bindinput="inputPrice" value="{{price}}" adjust-position="false"/>
+    </view>
+    <view class="popup-btn-row">
+      <view class="btn-cancel" bindtap="closeMask">取消</view>
+      <!-- JS方法是saveMsg，绑定对应名称 -->
+      <view class="btn-sure" bindtap="saveMsg">保存</view>
+    </view>
+  </view>
+
+  <view class="bottom-btn-bar">
+    <view class="btn-icon"></view>
+    <view class="btn-add" bindtap="openPopup"><text>+</text></view>
+    <view class="btn-icon"></view>
+  </view>
+</view>

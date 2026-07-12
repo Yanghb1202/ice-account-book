@@ -1,0 +1,122 @@
+<!-- pages/about/about.wxml -->
+<view class="page-wrap">
+  <!-- 顶部品牌区域 -->
+  <view class="brand-card">
+    <view class="logo-wrap">
+      <view class="logo-bg">🐱</view>
+      <view class="logo-ring"></view>
+    </view>
+    <text class="app-name">{{appName}}</text>
+    <text class="app-slogan">轻松记账,管好每一笔小钱</text>
+    <view class="version-pill">
+      <text>{{version}}</text>
+      <text class="dot">·</text>
+      <text>{{updateTime}}</text>
+    </view>
+  </view>
+
+  <!-- 应用介绍 -->
+  <view class="card-box intro-card">
+    <view class="card-head">
+      <view class="head-icon">📖</view>
+      <text class="head-text">软件介绍</text>
+    </view>
+    <text class="desc-text">
+      冰冰记账本是一款简洁可爱的个人记账小程序,支持日常收支记录、餐饮 AI 智能识别、预算管理、统计分析和存钱挑战。它希望用更轻松的方式,帮你看清钱花在哪里,也更容易坚持存钱。
+    </text>
+  </view>
+
+  <!-- 核心功能 -->
+  <view class="card-box">
+    <view class="card-head">
+      <view class="head-icon">✨</view>
+      <text class="head-text">核心功能</text>
+    </view>
+    <view class="feature-grid">
+      <view class="feature-item" wx:for="{{featureList}}" wx:key="title">
+        <view class="feature-icon">{{item.icon}}</view>
+        <text class="feature-title">{{item.title}}</text>
+        <text class="feature-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="card-box">
+    <view class="card-head">
+      <view class="head-icon">ℹ️</view>
+      <text class="head-text">版本信息</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">当前版本</text>
+      <text class="info-value">{{version}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">更新时间</text>
+      <text class="info-value">{{updateTime}}</text>
+    </view>
+    <view class="info-row" bindtap="checkUpdate">
+      <text class="info-label">检查更新</text>
+      <text class="info-value arrow">去检查 ›</text>
+    </view>
+  </view>
+
+  <!-- 更新日志 -->
+  <view class="card-box">
+    <view class="card-head">
+      <view class="head-icon">📝</view>
+      <text class="head-text">更新日志</text>
+    </view>
+    <view class="update-list">
+      <view class="update-item" wx:for="{{updateList}}" wx:key="*this">
+        <view class="update-dot"></view>
+        <text>{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系与反馈 -->
+  <view class="card-box">
+    <view class="card-head">
+      <view class="head-icon">💌</view>
+      <text class="head-text">联系与反馈</text>
+    </view>
+    <view class="contact-row" bindtap="copyEmail">
+      <view>
+        <text class="contact-title">联系邮箱</text>
+        <text class="contact-desc">{{contactEmail}}</text>
+      </view>
+      <text class="contact-arrow">复制 ›</text>
+    </view>
+    <view class="contact-row" bindtap="openPrivacy">
+      <view>
+        <text class="contact-title">隐私说明</text>
+        <text class="contact-desc">了解数据存储与使用方式</text>
+      </view>
+      <text class="contact-arrow">查看 ›</text>
+    </view>
+    <view class="link-btn" bindtap="goFeedback">前往反馈</view>
+  </view>
+
+  <!-- 底部版权 -->
+  <view class="copyright">
+    <text>© 2026 冰冰记账本 All Rights Reserved</text>
+    <text class="copyright-sub">用可爱的方式认真生活</text>
+  </view>
+
+  <!-- 隐私说明弹窗 -->
+  <view class="mask" wx:if="{{showPrivacyPop}}" bindtap="closePrivacy"></view>
+  <view class="privacy-pop" wx:if="{{showPrivacyPop}}">
+    <view class="privacy-head">
+      <text class="privacy-title">隐私说明</text>
+      <text class="privacy-close" bindtap="closePrivacy">×</text>
+    </view>
+    <view class="privacy-content">
+      <text>1. 账单、预算、存钱挑战等数据默认保存在你的小程序本地缓存中。</text>
+      <text>2. 餐饮 AI 识别需要上传图片到后端识别服务,仅用于识别菜品信息。</text>
+      <text>3. 建议不要在备注中填写银行卡号、身份证号等敏感信息。</text>
+      <text>4. 如需清空数据,可在“我的”页面使用清理缓存或退出相关功能。</text>
+    </view>
+    <view class="privacy-btn" bindtap="closePrivacy">我知道了</view>
+  </view>
+</view>
