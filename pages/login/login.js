@@ -1,4 +1,6 @@
 // pages/login/login.js
+const DB = require('../../utils/db.js')
+
 Page({
   data: {
     phone: '',
@@ -49,51 +51,48 @@ Page({
     return true
   },
 
-  doLogin() {
+  async doLogin() {
     if (!this.validateForm()) return
 
     const { phone, pwd } = this.data
-    const accountList = wx.getStorageSync('userAccountList') || []
-    const targetUser = accountList.find(item => item.phone === phone)
-
-    if (!targetUser) {
-      wx.showModal({
-        title: '账号不存在',
-        content: '该手机号还没有注册,是否前往注册？',
-        confirmText: '去注册',
-        success: res => {
-          if (res.confirm) {
-            wx.redirectTo({ url: `/pages/register/register?phone=${phone}` })
-          }
-        }
-      })
-      return
-    }
-
-    if (targetUser.password !== pwd) {
-      wx.showToast({ title: '密码错误,请重新输入', icon: 'none' })
-      return
-    }
 
     wx.showLoading({ title: '登录中...' })
-    setTimeout(() => {
-      wx.hideLoading()
-      const loginUser = {
-        ...targetUser,
-        loginTime: Date.now()
-      }
-      wx.setStorageSync('userLogin', loginUser)
-      if (this.data.rememberPhone) {
-        wx.setStorageSync('lastLoginPhone', phone)
-      } else {
-        wx.removeStorageSync('lastLoginPhone')
-      }
+    const result = await DB.userLogin({ phone, password: pwd })
+    wx.hideLoading()
 
-      wx.showToast({ title: '登录成功', icon: 'none' })
-      setTimeout(() => {
-        this.goHome()
-      }, 700)
-    }, 500)
+    if (!result.success) {
+      if (result.message === '用户不存在') {
+        wx.showModal({
+          title: '账号不存在',
+          content: '该手机号还没有注册,是否前往注册？',
+          confirmText: '去注册',
+          success: res => {
+            if (res.confirm) {
+              wx.redirectTo({ url: `/pages/register/register?phone=${phone}` })
+            }
+          }
+        })
+      } else {
+        wx.showToast({ title: result.message, icon: 'none' })
+      }
+      return
+    }
+
+    const loginUser = {
+      ...result.data,
+      loginTime: Date.now()
+    }
+    wx.setStorageSync('userLogin', loginUser)
+    if (this.data.rememberPhone) {
+      wx.setStorageSync('lastLoginPhone', phone)
+    } else {
+      wx.removeStorageSync('lastLoginPhone')
+    }
+
+    wx.showToast({ title: '登录成功', icon: 'none' })
+    setTimeout(() => {
+      this.goHome()
+    }, 700)
   },
 
   goHome() {
