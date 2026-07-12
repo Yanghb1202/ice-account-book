@@ -1,4 +1,6 @@
 // pages/register/register.js
+const DB = require('../../utils/db.js')
+
 Page({
   data: {
     phone: '',
@@ -81,33 +83,22 @@ Page({
     return true
   },
 
-  doRegister() {
+  async doRegister() {
     if (!this.validateForm()) return
 
     const { phone, nickname, pwd, avatar } = this.data
-    const accountList = wx.getStorageSync('userAccountList') || []
-    const exist = accountList.find(item => item.phone === phone)
-    if (exist) {
-      wx.showToast({ title: '该手机号已注册,请直接登录', icon: 'none' })
+
+    wx.showLoading({ title: '注册中...' })
+    const result = await DB.registerUser({ phone, password: pwd, nickname: nickname.trim() })
+    wx.hideLoading()
+
+    if (!result.success) {
+      wx.showToast({ title: result.message, icon: 'none' })
       setTimeout(() => {
         wx.redirectTo({ url: `/pages/login/login?phone=${phone}` })
       }, 800)
       return
     }
-
-    wx.showLoading({ title: '注册中...' })
-    setTimeout(() => {
-      wx.hideLoading()
-      const userInfo = {
-        uid: Date.now().toString(),
-        phone,
-        password: pwd,
-        nickname: nickname.trim(),
-        avatar,
-        createTime: Date.now()
-      }
-      accountList.push(userInfo)
-      wx.setStorageSync('userAccountList', accountList)
 
       wx.showToast({ title: '注册成功,请登录', icon: 'none' })
       setTimeout(() => {

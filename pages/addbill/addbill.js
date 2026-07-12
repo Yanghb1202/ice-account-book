@@ -1,5 +1,6 @@
 // pages/addbill/addbill.js
 const app = getApp()
+const DB = require('../../utils/db.js')
 
 Page({
   data: {
@@ -265,7 +266,7 @@ Page({
   goBack() { wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/index/index' }) }) },
 
   // ============ 提交 ============
-  submitBill() {
+  async submitBill() {
     const money = this.getFinalMoney()
     if (!money || money <= 0) {
       wx.showToast({ title: '请输入金额', icon: 'none' })
@@ -288,6 +289,7 @@ Page({
     const all = wx.getStorageSync('all_bill') || []
     all.unshift(billData)
     wx.setStorageSync('all_bill', all)
+    await DB.addBill(billData)
 
     // 同步预算（仅支出）
     if (this.data.billType === 0) {

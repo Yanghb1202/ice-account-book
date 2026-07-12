@@ -1,4 +1,6 @@
 // pages/billList/billList.js
+const DB = require('../../utils/db.js')
+
 Page({
   data: {
     billList: [],
@@ -39,8 +41,9 @@ Page({
     return ''
   },
 
-  loadBills() {
-    const allBill = wx.getStorageSync('all_bill') || []
+  async loadBills() {
+    const billResult = await DB.getBillList()
+    const allBill = billResult.success && billResult.data ? billResult.data : (wx.getStorageSync('all_bill') || [])
     const list = allBill.map(item => {
       const fullDate = this.parseBillDate(item)
       return {
