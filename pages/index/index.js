@@ -1,4 +1,6 @@
 // pages/index/index.js
+const DB = require('../../utils/db.js')
+
 Page({
   data: {
     greeting: '早上好',
@@ -82,8 +84,9 @@ Page({
   },
 
   // 加载全部账单,统计本月、今日、近7日数据
-  loadAllBillData() {
-    const allBill = wx.getStorageSync('all_bill') || []
+  async loadAllBillData() {
+    const billResult = await DB.getBillList()
+    const allBill = billResult.success && billResult.data ? billResult.data : (wx.getStorageSync('all_bill') || [])
     const now = new Date()
     const currentYear = now.getFullYear()
     const currentMonth = now.getMonth()
