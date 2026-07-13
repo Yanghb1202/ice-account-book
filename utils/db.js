@@ -84,7 +84,7 @@ const localFn = {
   }
 }
 
-const useCloud = false
+const useCloud = true
 
 const DB = {
   addBill: async (data) => {
@@ -95,7 +95,13 @@ const DB = {
       type: data.type !== undefined ? data.type : (data.billType !== undefined ? data.billType : 0)
     }
     if (useCloud && userId) {
-      return await cloudFn('addBill', { ...billData, userId })
+      const result = await cloudFn('addBill', { ...billData, userId })
+      if (result.success) {
+        const all = wx.getStorageSync('all_bill') || []
+        all.unshift(billData)
+        wx.setStorageSync('all_bill', all)
+      }
+      return result
     }
     return await localFn.addBill(billData)
   },
@@ -118,7 +124,26 @@ const DB = {
   },
   registerUser: async (params) => {
     if (useCloud) {
-      return await cloudFn('registerUser', params)
+      try {
+        const result = await cloudFn('registerUser', params)
+        if (result.success) {
+          const accountList = wx.getStorageSync('userAccountList') || []
+          const exist = accountList.find(item => item.phone === params.phone)
+          if (!exist) {
+            accountList.push({
+              phone: params.phone,
+              password: params.password,
+              nickname: params.nickname || '记账用户',
+              avatar: params.avatar || ''
+            })
+            wx.setStorageSync('userAccountList', accountList)
+          }
+        }
+        return result
+      } catch (err) {
+        console.error('cloud registerUser failed, fallback to local:', err)
+        return await localFn.registerUser(params)
+      }
     }
     return await localFn.registerUser(params)
   },

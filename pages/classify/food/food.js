@@ -1,4 +1,4 @@
-const DB = require('../../utils/db.js')
+const DB = require('../../../utils/db.js')
 Page({
   data: {
     weekList: [
@@ -320,9 +320,11 @@ Page({
     const foodPrice = price ? Number(price) : 0;
     const now = Date.now();
     const date = new Date();
+    const y = date.getFullYear();
     const m = date.getMonth() + 1;
     const d = date.getDate();
     const dateStr = `${m}月${d}日`;
+    const fullDateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const cateName = "餐饮";
     const cateIcon = "cate_food.png";
     const moneyNum = Number(foodPrice);
@@ -330,6 +332,19 @@ Page({
     if (!aiFoodName || aiFoodName === "请手动填写") {
       wx.showToast({ title: "请先编辑正确菜名", icon: "none" });
       return;
+    }
+
+    let imgUrl = '';
+    if (tempImg) {
+      try {
+        const uploadRes = await wx.cloud.uploadFile({
+          cloudPath: `food_images/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.png`,
+          filePath: tempImg
+        });
+        imgUrl = uploadRes.fileID;
+      } catch (err) {
+        console.error('upload food image error:', err);
+      }
     }
 
     const newItem = {
@@ -342,11 +357,11 @@ Page({
       cateIcon,
       remark: aiFoodName,
       date: dateStr,
-      fullDate: now,
+      fullDate: fullDateStr,
       bookName: '日常账本',
       createTime: now,
       cal: aiCal,
-      img: tempImg,
+      img: imgUrl,
       name: aiFoodName,
       price: Math.round(moneyNum * 100) / 100
     };

@@ -256,12 +256,17 @@ Page({
 
     wx.showModal({
       title: "退出登录",
-      content: "退出后不会删除本地账单数据。",
+      content: "退出后将清空所有本地数据。",
       confirmText: "退出",
       confirmColor: "#e67e22",
       success: (res) => {
         if (res.confirm) {
           wx.removeStorageSync("userLogin")
+          wx.removeStorageSync("all_bill")
+          wx.removeStorageSync("userAccountList")
+          wx.removeStorageSync("budget")
+          wx.removeStorageSync("asset")
+          wx.removeStorageSync("saveChallenge")
           this.refreshUser()
           wx.showToast({ title: "已退出登录", icon: "none" })
         }

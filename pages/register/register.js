@@ -103,8 +103,12 @@ Page({
       }
     }
     
+    console.log('calling DB.registerUser with:', { phone, password: pwd, nickname: nickname.trim(), avatar: avatarUrl })
     const result = await DB.registerUser({ phone, password: pwd, nickname: nickname.trim(), avatar: avatarUrl })
     wx.hideLoading()
+    
+    console.log('register result:', result)
+    console.log('useCloud value:', require('../../utils/db.js').useCloud)
 
     if (!result.success) {
       wx.showToast({ title: result.message, icon: 'none' })

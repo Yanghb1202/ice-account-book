@@ -249,19 +249,27 @@ Page({
     const todayKey = `${tm}月${td}日`
 
     let todayExp = 0, monthExp = 0, monthIn = 0
+    const todayFullDate = `${ty}-${String(tm).padStart(2, '0')}-${String(td).padStart(2, '0')}`
+    
     all.forEach(it => {
-      // 解析记录的 fullDate（兼容旧数据）
-      let mY = ty, mM = tm
+      let mY = ty, mM = tm, dD = td
       if (it.fullDate) {
-        const a = it.fullDate.split('-')
-        mY = Number(a[0]); mM = Number(a[1])
+        try {
+          const a = String(it.fullDate).split('-')
+          if (a.length >= 3) {
+            mY = Number(a[0]); mM = Number(a[1]); dD = Number(a[2])
+          } else if (typeof it.fullDate === 'number') {
+            const d = new Date(it.fullDate)
+            mY = d.getFullYear(); mM = d.getMonth() + 1; dD = d.getDate()
+          }
+        } catch (e) {}
       }
       const inThisMonth = (mY === ty && mM === tm)
       if (inThisMonth) {
         if (it.type === 0) monthExp += Number(it.money)
         else monthIn += Number(it.money)
       }
-      if (it.type === 0 && it.date === todayKey) {
+      if (it.type === 0 && mY === ty && mM === tm && dD === td) {
         todayExp += Number(it.money)
       }
     })

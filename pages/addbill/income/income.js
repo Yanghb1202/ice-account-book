@@ -1,4 +1,4 @@
-const DB = require('../../utils/db.js')
+const DB = require('../../../utils/db.js')
 Page({
   data: {
     incomeMoney: "0",
@@ -52,6 +52,11 @@ goOutBill(){
     if(money <= 0) return wx.showToast({ title: "请输入金额", icon: "none" })
     const cate = this.data.incomeCateList[this.data.curCateIndex]
     const now = Date.now()
+    const date = new Date()
+    const y = date.getFullYear()
+    const m = date.getMonth() + 1
+    const d = date.getDate()
+    const fullDateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
     const newIncome = {
       id: now,
       type: 1,
@@ -62,7 +67,7 @@ goOutBill(){
       cateIcon: cate.img,
       remark: this.data.remark || cate.name,
       date: this.data.showDate,
-      fullDate: now,
+      fullDate: fullDateStr,
       bookName: '日常账本',
       createTime: now
     }

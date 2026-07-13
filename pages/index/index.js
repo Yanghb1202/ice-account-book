@@ -77,10 +77,15 @@ Page({
 
   parseBillDate(item, currentYear) {
     if (item.fullDate) {
-      const arr = item.fullDate.split('-')
-      if (arr.length >= 3) {
-        return new Date(Number(arr[0]), Number(arr[1]) - 1, Number(arr[2]))
-      }
+      try {
+        const arr = String(item.fullDate).split('-')
+        if (arr.length >= 3) {
+          return new Date(Number(arr[0]), Number(arr[1]) - 1, Number(arr[2]))
+        }
+        if (typeof item.fullDate === 'number') {
+          return new Date(item.fullDate)
+        }
+      } catch (e) {}
     }
     if (item.date) {
       const m = item.date.match(/(\d+)月(\d+)日?/)

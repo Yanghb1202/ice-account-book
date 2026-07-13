@@ -93,11 +93,11 @@ Page({
 
   clearUserBusinessData() {
     wx.removeStorageSync('all_bill')
-    wx.removeStorageSync('budgetData')
-    wx.removeStorageSync('assetData')
+    wx.removeStorageSync('userAccountList')
+    wx.removeStorageSync('budget')
+    wx.removeStorageSync('asset')
     wx.removeStorageSync('saveChallenge')
     wx.removeStorageSync('categoryData')
-    wx.removeStorageSync('accountList')
   },
 
   goHome() {
