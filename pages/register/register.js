@@ -89,7 +89,21 @@ Page({
     const { phone, nickname, pwd, avatar } = this.data
 
     wx.showLoading({ title: '注册中...' })
-    const result = await DB.registerUser({ phone, password: pwd, nickname: nickname.trim() })
+    
+    let avatarUrl = ''
+    if (avatar) {
+      try {
+        const uploadRes = await wx.cloud.uploadFile({
+          cloudPath: `avatars/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.png`,
+          filePath: avatar
+        })
+        avatarUrl = uploadRes.fileID
+      } catch (err) {
+        console.error('upload avatar error:', err)
+      }
+    }
+    
+    const result = await DB.registerUser({ phone, password: pwd, nickname: nickname.trim(), avatar: avatarUrl })
     wx.hideLoading()
 
     if (!result.success) {

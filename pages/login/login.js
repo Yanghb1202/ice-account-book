@@ -6,8 +6,7 @@ Page({
     phone: '',
     pwd: '',
     rememberPhone: true,
-    showPwd: false,
-    accountCount: 0
+    showPwd: false
   },
 
   onLoad(options) {
@@ -15,11 +14,6 @@ Page({
     this.setData({
       phone: options && options.phone ? options.phone : lastPhone
     })
-  },
-
-  onShow() {
-    const accountList = wx.getStorageSync('userAccountList') || []
-    this.setData({ accountCount: accountList.length })
   },
 
   inputPhone(e) {

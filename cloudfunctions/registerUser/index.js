@@ -23,7 +23,7 @@ exports.main = async (event, context) => {
         phone: phone,
         password: password,
         nickname: nickname || '记账用户',
-        avatar: '',
+        avatar: event.avatar || '',
         createTime: db.serverDate()
       }
     })
@@ -33,7 +33,8 @@ exports.main = async (event, context) => {
       data: {
         userId: result._id,
         phone: phone,
-        nickname: nickname || '记账用户'
+        nickname: nickname || '记账用户',
+        avatar: event.avatar || ''
       },
       message: '注册成功'
     }

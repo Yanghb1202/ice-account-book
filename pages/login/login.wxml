@@ -7,10 +7,6 @@
   </view>
 
   <view class="form-card">
-    <view class="account-tip">
-      <text>当前本地已注册 {{accountCount}} 个账号</text>
-    </view>
-
     <view class="input-item">
       <text class="input-icon">📱</text>
       <input class="input" placeholder="请输入手机号" type="number" maxlength="11" bindinput="inputPhone" value="{{phone}}" />

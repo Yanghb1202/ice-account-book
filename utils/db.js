@@ -54,7 +54,7 @@ const localFn = {
     if (user.password !== params.password) return { success: false, message: '密码错误' }
     return {
       success: true,
-      data: { userId: user.phone || 'demo', phone: user.phone, nickname: user.nickname || '记账用户' }
+      data: { userId: user.phone || 'demo', phone: user.phone, nickname: user.nickname || '记账用户', avatar: user.avatar || '' }
     }
   },
   registerUser: async (params) => {
@@ -64,10 +64,11 @@ const localFn = {
     accountList.push({
       phone: params.phone,
       password: params.password,
-      nickname: params.nickname || '记账用户'
+      nickname: params.nickname || '记账用户',
+      avatar: params.avatar || ''
     })
     wx.setStorageSync('userAccountList', accountList)
-    return { success: true, data: { userId: params.phone, phone: params.phone, nickname: params.nickname || '记账用户' } }
+    return { success: true, data: { userId: params.phone, phone: params.phone, nickname: params.nickname || '记账用户', avatar: params.avatar || '' } }
   },
   foodAi: async (params) => {
     return {
