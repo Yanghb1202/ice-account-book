@@ -223,9 +223,10 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 60rpx 40rpx;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 /* 背景横线装饰 */
@@ -372,6 +373,54 @@ page {
 .candidate-item.active {
   background: #222;
   color: #fff;
+}
+
+/* 推荐列表 */
+.recommend-box {
+  width: 100%;
+  margin: 20rpx 0;
+  position: relative;
+  z-index: 10;
+}
+.recommend-title {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+  text-align: center;
+}
+.recommend-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16rpx;
+}
+.recommend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
+  min-width: 140rpx;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.recommend-icon {
+  font-size: 44rpx;
+  margin-bottom: 10rpx;
+}
+.recommend-name {
+  font-size: 26rpx;
+  color: #222;
+  font-weight: 600;
+}
+.recommend-cal {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 6rpx;
 }
 
 /* 价格输入 */

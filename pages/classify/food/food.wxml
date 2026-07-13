@@ -86,7 +86,7 @@
       <text class="info-text">建议：{{aiTip}}</text>
     </view>
 
-    <view wx:if="{{candidateList.length > 1}}" class="candidate-box">
+    <view wx:if="{{candidateList.length > 0}}" class="candidate-box">
       <text class="candidate-title">识别不准？点选正确候选</text>
       <view class="candidate-list">
         <view
@@ -98,6 +98,25 @@
         >
           <text>{{item.name}}</text>
           <text wx:if="{{item.confidenceText}}">{{item.confidenceText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{recommendedList.length > 0}}" class="recommend-box">
+      <text class="recommend-title">快速选择：</text>
+      <view class="recommend-list">
+        <view
+          wx:for="{{recommendedList}}"
+          wx:key="name"
+          class="recommend-item"
+          bindtap="selectRecommended"
+          data-name="{{item.name}}"
+          data-cal="{{item.cal}}"
+          data-tip="{{item.tip}}"
+        >
+          <text class="recommend-icon">{{item.icon}}</text>
+          <text class="recommend-name">{{item.name}}</text>
+          <text class="recommend-cal">{{item.cal}} kcal</text>
         </view>
       </view>
     </view>

@@ -1,3 +1,4 @@
+const DB = require('../../utils/db.js')
 Page({
   data: {
     incomeMoney: "0",
@@ -46,22 +47,26 @@ goOutBill(){
     wx.showModal({ title: "日期选择", content: "简易版可接入日期组件" })
   },
   // 保存收入到全局账单
-  saveIncome() {
+  async saveIncome() {
     const money = Number(this.data.incomeMoney)
     if(money <= 0) return wx.showToast({ title: "请输入金额", icon: "none" })
     const cate = this.data.incomeCateList[this.data.curCateIndex]
+    const now = Date.now()
     const newIncome = {
-      id: Date.now(),
-      type: 1, // 1=收入 0=支出
-      money: money.toFixed(2),
+      id: now,
+      type: 1,
+      billType: 1,
+      money: Math.round(money * 100) / 100,
       cateName: cate.name,
+      cateEmoji: '',
       cateIcon: cate.img,
       remark: this.data.remark || cate.name,
-      date: this.data.showDate
+      date: this.data.showDate,
+      fullDate: now,
+      bookName: '日常账本',
+      createTime: now
     }
-    let allBill = wx.getStorageSync("all_bill") || []
-    allBill.unshift(newIncome)
-    wx.setStorageSync("all_bill", allBill)
+    await DB.addBill(newIncome)
     wx.showToast({ title: "收入记录成功" })
     setTimeout(()=>wx.navigateBack(), 800)
   }

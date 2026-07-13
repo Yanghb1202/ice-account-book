@@ -297,9 +297,6 @@ Page({
       bookName: this.data.bookName,
       createTime: Date.now()
     }
-    const all = wx.getStorageSync('all_bill') || []
-    all.unshift(billData)
-    wx.setStorageSync('all_bill', all)
     await DB.addBill(billData)
 
     // 同步预算（仅支出）

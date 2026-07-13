@@ -1,3 +1,4 @@
+const DB = require('../../utils/db.js')
 Page({
   data: {
     weekList: [
@@ -24,6 +25,7 @@ Page({
     aiConfidence: 0,
     aiConfidenceText: "",
     candidateList: [],
+    recommendedList: [],
     price: "",
 
     // 后端API地址
@@ -196,7 +198,8 @@ Page({
             aiTip: result.data.tip,
             aiConfidence: result.data.confidence || 0,
             aiConfidenceText: this.formatConfidence(result.data.confidence || 0),
-            candidateList: candidates
+            candidateList: candidates,
+            recommendedList: result.data.recommended || []
           });
         } else {
           const msg = result && result.message ? result.message : "识别失败，请手动填写";
@@ -255,6 +258,17 @@ Page({
     });
   },
 
+  selectRecommended(e) {
+    const { name, cal, tip } = e.currentTarget.dataset;
+    this.setData({
+      aiFoodName: name,
+      aiCal: Number(cal),
+      aiTip: tip,
+      aiConfidence: 1,
+      aiConfidenceText: "100%"
+    });
+  },
+
   // ==================== 价格输入 ====================
 
   inputPrice(e) {
@@ -301,12 +315,13 @@ Page({
     });
   },
 
-  saveFood() {
+  async saveFood() {
     const { tempImg, aiFoodName, aiCal, price } = this.data;
     const foodPrice = price ? Number(price) : 0;
-    const now = new Date();
-    const m = now.getMonth() + 1;
-    const d = now.getDate();
+    const now = Date.now();
+    const date = new Date();
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
     const dateStr = `${m}月${d}日`;
     const cateName = "餐饮";
     const cateIcon = "cate_food.png";
@@ -318,22 +333,25 @@ Page({
     }
 
     const newItem = {
-      id: Date.now(),
+      id: now,
       type: 0,
-      money: moneyNum.toFixed(2),
+      billType: 0,
+      money: Math.round(moneyNum * 100) / 100,
       cateName,
+      cateEmoji: '',
       cateIcon,
       remark: aiFoodName,
       date: dateStr,
+      fullDate: now,
+      bookName: '日常账本',
+      createTime: now,
       cal: aiCal,
       img: tempImg,
       name: aiFoodName,
-      price: moneyNum.toFixed(2)
+      price: Math.round(moneyNum * 100) / 100
     };
 
-    let allBill = wx.getStorageSync("all_bill") || [];
-    allBill.unshift(newItem);
-    wx.setStorageSync("all_bill", allBill);
+    await DB.addBill(newItem);
 
     // 同步预算
     this.syncBudgetUsed("餐饮", moneyNum);
