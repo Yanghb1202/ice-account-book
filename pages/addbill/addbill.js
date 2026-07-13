@@ -231,6 +231,16 @@ Page({
 
   // ============ 顶部统计 ============
   calcStat() {
+    const userInfo = wx.getStorageSync('userLogin')
+    if (!userInfo) {
+      this.setData({
+        todayExpense: '0.00',
+        monthExpense: '0.00',
+        monthIncome: '0.00'
+      })
+      return
+    }
+
     const all = wx.getStorageSync('all_bill') || []
     const now = new Date()
     const ty = now.getFullYear()

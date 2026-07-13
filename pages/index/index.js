@@ -188,6 +188,17 @@ Page({
 
   // 读取预算数据
   loadBudgetData() {
+    const userInfo = wx.getStorageSync('userLogin')
+    if (!userInfo) {
+      this.setData({
+        budgetTotal: '0.00',
+        budgetUsed: '0.00',
+        budgetLeft: '0.00',
+        budgetPercent: 0,
+        budgetWidth: '0%'
+      })
+      return
+    }
     const budgetData = wx.getStorageSync('budgetData') || {}
     const total = Number(budgetData.totalBudget) || 0
     const used = Number(budgetData.usedMoney) || 0
@@ -206,6 +217,15 @@ Page({
 
   // 读取存钱挑战缓存
   loadSaveData() {
+    const userInfo = wx.getStorageSync('userLogin')
+    if (!userInfo) {
+      this.setData({
+        saveNow: '0.00',
+        savePercent: 0,
+        progressWidth: '0%'
+      })
+      return
+    }
     const saveStorage = wx.getStorageSync('saveChallenge') || { totalSave: 0 }
     const target = Number(String(this.data.saveTarget).replace(/,/g, '')) || 6679
     const current = Number(saveStorage.totalSave) || 0
