@@ -276,6 +276,7 @@ Page({
     const billData = {
       id: Date.now(),
       type: this.data.billType,
+      billType: this.data.billType,
       money: Math.round(money * 100) / 100,
       cateName: cateInfo.name,
       cateEmoji: cateInfo.emoji,

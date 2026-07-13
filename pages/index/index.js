@@ -108,23 +108,26 @@ Page({
       if (!billDate) return
 
       const money = Number(item.money) || 0
+      const billType = item.billType !== undefined ? item.billType : (item.type !== undefined ? item.type : 0)
       const isThisMonth = billDate.getFullYear() === currentYear && billDate.getMonth() === currentMonth
       const billDateKey = this.formatDate(billDate)
 
       if (isThisMonth) {
         monthBillCount++
-        if (item.type === 0) monthPay += money
+        if (billType === 0) monthPay += money
         else monthIncome += money
       }
 
       if (billDateKey === todayKey) {
-        if (item.type === 0) todayPay += money
+        if (billType === 0) todayPay += money
         else todayIncome += money
       }
 
       if (billDate.getTime() >= sevenDayAgo.getTime()) {
         weekBillList.push({
           ...item,
+          type: billType,
+          billType: billType,
           moneyText: this.formatMoney(money),
           emoji: item.cateEmoji || this.getCateEmoji(item.cateName),
           remarkText: item.remark || item.cateName,

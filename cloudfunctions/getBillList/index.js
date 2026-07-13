@@ -7,6 +7,13 @@ exports.main = async (event, context) => {
   try {
     const { userId, startDate, endDate, billType, page = 1, pageSize = 20 } = event
     
+    if (!userId) {
+      return {
+        success: false,
+        message: '用户ID不能为空'
+      }
+    }
+    
     let query = db.collection('bills').where({ userId })
     
     if (startDate && endDate) {
