@@ -83,10 +83,21 @@ Page({
       wx.removeStorageSync('lastLoginPhone')
     }
 
+    this.clearUserBusinessData()
+
     wx.showToast({ title: '登录成功', icon: 'none' })
     setTimeout(() => {
       this.goHome()
     }, 700)
+  },
+
+  clearUserBusinessData() {
+    wx.removeStorageSync('all_bill')
+    wx.removeStorageSync('budgetData')
+    wx.removeStorageSync('assetData')
+    wx.removeStorageSync('saveChallenge')
+    wx.removeStorageSync('categoryData')
+    wx.removeStorageSync('accountList')
   },
 
   goHome() {
