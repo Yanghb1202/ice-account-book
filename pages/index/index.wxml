@@ -3,7 +3,7 @@
   <!-- 顶部欢迎区 -->
   <view class="header-section">
     <view>
-      <text class="hello-text">{{greeting}}，冰冰</text>
+      <text class="hello-text">{{greeting}}，{{userName || '记账用户'}}</text>
       <text class="sub-text">{{slogan}}</text>
     </view>
     <view class="avatar-box">🐾</view>

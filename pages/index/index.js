@@ -5,6 +5,7 @@ Page({
   data: {
     greeting: '早上好',
     slogan: '今天也要认真记账呀',
+    userName: '',
 
     funcList: [
       { icon: '🧾', name: '记账', desc: '快速记录', page: '/pages/addbill/addbill' },
@@ -37,9 +38,16 @@ Page({
 
   onShow() {
     this.setGreeting()
+    this.loadUserName()
     this.loadAllBillData()
     this.loadBudgetData()
     this.loadSaveData()
+  },
+
+  loadUserName() {
+    const userInfo = wx.getStorageSync('userLogin')
+    const userName = userInfo && userInfo.nickname ? userInfo.nickname : ''
+    this.setData({ userName })
   },
 
   setGreeting() {
