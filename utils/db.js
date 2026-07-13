@@ -21,22 +21,30 @@ const cloudFn = async (name, data) => {
 const localFn = {
   addBill: async (data) => {
     const allBill = wx.getStorageSync('all_bill') || []
-    allBill.unshift({
+    const billData = {
       ...data,
-      id: Date.now().toString()
-    })
+      id: Date.now().toString(),
+      billType: data.billType !== undefined ? data.billType : data.type,
+      type: data.type !== undefined ? data.type : data.billType
+    }
+    allBill.unshift(billData)
     wx.setStorageSync('all_bill', allBill)
     return { success: true, message: '记账成功' }
   },
   getBillList: async (params) => {
     const allBill = wx.getStorageSync('all_bill') || []
     let list = allBill
-    if (params.billType !== undefined && params.billType !== null) {
-      list = list.filter(item => item.type === params.billType)
+    const billType = params.billType !== undefined ? params.billType : params.type
+    if (billType !== undefined && billType !== null) {
+      list = list.filter(item => (item.billType !== undefined ? item.billType : item.type) === billType)
     }
     if (params.startDate && params.endDate) {
       list = list.filter(item => item.fullDate >= params.startDate && item.fullDate <= params.endDate)
     }
+    list.forEach(item => {
+      if (item.type === undefined) item.type = item.billType
+      if (item.billType === undefined) item.billType = item.type
+    })
     return { success: true, data: list, total: list.length }
   },
   userLogin: async (params) => {
@@ -46,7 +54,7 @@ const localFn = {
     if (user.password !== params.password) return { success: false, message: '密码错误' }
     return {
       success: true,
-      data: { userId: user.phone, phone: user.phone, nickname: user.nickname }
+      data: { userId: user.phone || 'demo', phone: user.phone, nickname: user.nickname || '记账用户', avatar: user.avatar || '' }
     }
   },
   registerUser: async (params) => {
@@ -56,10 +64,11 @@ const localFn = {
     accountList.push({
       phone: params.phone,
       password: params.password,
-      nickname: params.nickname || '记账用户'
+      nickname: params.nickname || '记账用户',
+      avatar: params.avatar || ''
     })
     wx.setStorageSync('userAccountList', accountList)
-    return { success: true, data: { userId: params.phone, phone: params.phone, nickname: params.nickname } }
+    return { success: true, data: { userId: params.phone, phone: params.phone, nickname: params.nickname || '记账用户', avatar: params.avatar || '' } }
   },
   foodAi: async (params) => {
     return {
@@ -67,6 +76,7 @@ const localFn = {
       data: {
         foodName: '美食',
         calories: 250,
+        nutrients: { protein: 15, fat: 10, carbs: 30 },
         confidence: 85,
         tip: '合理饮食，健康生活'
       }
@@ -79,17 +89,26 @@ const useCloud = false
 const DB = {
   addBill: async (data) => {
     const userId = getUserId()
-    if (useCloud && userId) {
-      return await cloudFn('addBill', { ...data, userId })
+    const billData = {
+      ...data,
+      billType: data.billType !== undefined ? data.billType : (data.type !== undefined ? data.type : 0),
+      type: data.type !== undefined ? data.type : (data.billType !== undefined ? data.billType : 0)
     }
-    return await localFn.addBill(data)
+    if (useCloud && userId) {
+      return await cloudFn('addBill', { ...billData, userId })
+    }
+    return await localFn.addBill(billData)
   },
   getBillList: async (params = {}) => {
     const userId = getUserId()
-    if (useCloud && userId) {
-      return await cloudFn('getBillList', { ...params, userId })
+    const queryParams = {
+      ...params,
+      billType: params.billType !== undefined ? params.billType : params.type
     }
-    return await localFn.getBillList(params)
+    if (useCloud && userId) {
+      return await cloudFn('getBillList', { ...queryParams, userId })
+    }
+    return await localFn.getBillList(queryParams)
   },
   userLogin: async (params) => {
     if (useCloud) {

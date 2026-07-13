@@ -7,6 +7,20 @@ exports.main = async (event, context) => {
   try {
     const { phone, password } = event
     
+    if (!phone || !password) {
+      return {
+        success: false,
+        message: '手机号和密码不能为空'
+      }
+    }
+    
+    if (!/^1[3-9]\d{9}$/.test(phone)) {
+      return {
+        success: false,
+        message: '请输入正确的手机号'
+      }
+    }
+    
     const result = await db.collection('users').where({
       phone: phone
     }).get()
@@ -32,8 +46,8 @@ exports.main = async (event, context) => {
       data: {
         userId: user._id,
         phone: user.phone,
-        nickname: user.nickname,
-        avatar: user.avatar
+        nickname: user.nickname || '记账用户',
+        avatar: user.avatar || ''
       },
       message: '登录成功'
     }

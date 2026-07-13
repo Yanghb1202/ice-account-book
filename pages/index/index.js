@@ -5,6 +5,7 @@ Page({
   data: {
     greeting: '早上好',
     slogan: '今天也要认真记账呀',
+    userName: '',
 
     funcList: [
       { icon: '🧾', name: '记账', desc: '快速记录', page: '/pages/addbill/addbill' },
@@ -37,9 +38,16 @@ Page({
 
   onShow() {
     this.setGreeting()
+    this.loadUserName()
     this.loadAllBillData()
     this.loadBudgetData()
     this.loadSaveData()
+  },
+
+  loadUserName() {
+    const userInfo = wx.getStorageSync('userLogin')
+    const userName = userInfo && userInfo.nickname ? userInfo.nickname : ''
+    this.setData({ userName })
   },
 
   setGreeting() {
@@ -108,23 +116,26 @@ Page({
       if (!billDate) return
 
       const money = Number(item.money) || 0
+      const billType = item.billType !== undefined ? item.billType : (item.type !== undefined ? item.type : 0)
       const isThisMonth = billDate.getFullYear() === currentYear && billDate.getMonth() === currentMonth
       const billDateKey = this.formatDate(billDate)
 
       if (isThisMonth) {
         monthBillCount++
-        if (item.type === 0) monthPay += money
+        if (billType === 0) monthPay += money
         else monthIncome += money
       }
 
       if (billDateKey === todayKey) {
-        if (item.type === 0) todayPay += money
+        if (billType === 0) todayPay += money
         else todayIncome += money
       }
 
       if (billDate.getTime() >= sevenDayAgo.getTime()) {
         weekBillList.push({
           ...item,
+          type: billType,
+          billType: billType,
           moneyText: this.formatMoney(money),
           emoji: item.cateEmoji || this.getCateEmoji(item.cateName),
           remarkText: item.remark || item.cateName,
@@ -177,6 +188,17 @@ Page({
 
   // 读取预算数据
   loadBudgetData() {
+    const userInfo = wx.getStorageSync('userLogin')
+    if (!userInfo) {
+      this.setData({
+        budgetTotal: '0.00',
+        budgetUsed: '0.00',
+        budgetLeft: '0.00',
+        budgetPercent: 0,
+        budgetWidth: '0%'
+      })
+      return
+    }
     const budgetData = wx.getStorageSync('budgetData') || {}
     const total = Number(budgetData.totalBudget) || 0
     const used = Number(budgetData.usedMoney) || 0
@@ -195,6 +217,15 @@ Page({
 
   // 读取存钱挑战缓存
   loadSaveData() {
+    const userInfo = wx.getStorageSync('userLogin')
+    if (!userInfo) {
+      this.setData({
+        saveNow: '0.00',
+        savePercent: 0,
+        progressWidth: '0%'
+      })
+      return
+    }
     const saveStorage = wx.getStorageSync('saveChallenge') || { totalSave: 0 }
     const target = Number(String(this.data.saveTarget).replace(/,/g, '')) || 6679
     const current = Number(saveStorage.totalSave) || 0

@@ -14,12 +14,14 @@
     </view>
 
     <view wx:if="{{!isLogin}}" class="login-panel">
-      <view class="avatar-placeholder">
-        <text>👋</text>
-      </view>
-      <view class="login-text">
-        <text class="login-title">欢迎来到记账小窝</text>
-        <text class="login-desc">登录后同步查看资产、预算和账本管理</text>
+      <view class="login-top">
+        <view class="avatar-placeholder">
+          <text>👋</text>
+        </view>
+        <view class="login-text">
+          <text class="login-title">欢迎来到记账小窝</text>
+          <text class="login-desc">登录后同步查看资产、预算和账本管理</text>
+        </view>
       </view>
       <view class="login-actions">
         <button class="login-btn" bindtap="goLogin">登录</button>

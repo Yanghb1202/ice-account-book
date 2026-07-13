@@ -31,7 +31,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "冰冰记账本",
+    "navigationBarTitleText": "记账本",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {

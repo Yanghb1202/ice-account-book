@@ -87,6 +87,20 @@ Page({
   },
 
   calcAssetFromBill() {
+    const loginInfo = wx.getStorageSync("userLogin")
+    if (!loginInfo) {
+      this.setData({
+        asset: "0.00",
+        debt: "0.00",
+        assetTotal: "0.00",
+        monthIncome: "0.00",
+        monthExpense: "0.00",
+        monthBalance: "0.00",
+        billCount: 0
+      })
+      return
+    }
+
     const allBill = wx.getStorageSync("all_bill") || []
     const now = new Date()
     const currentMonth = now.getMonth() + 1
