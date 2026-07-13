@@ -5,25 +5,27 @@ const db = cloud.database()
 
 exports.main = async (event, context) => {
   try {
-    const { billType, money, remark, date, fullDate, cateName, cateEmoji, userId } = event
+    const { billType = 0, money = 0, remark = '', date = '', fullDate = '', cateName = '', cateEmoji = '', userId = '' } = event
+    
+    const cleanCateEmoji = typeof cateEmoji === 'string' ? cateEmoji : ''
     
     const result = await db.collection('bills').add({
       data: {
         billType: Number(billType),
         money: Number(money),
-        remark: remark || '',
-        date: date || '',
-        fullDate: fullDate || '',
-        cateName: cateName || '',
-        cateEmoji: cateEmoji || '',
-        userId: userId || '',
+        remark: String(remark),
+        date: String(date),
+        fullDate: String(fullDate),
+        cateName: String(cateName),
+        cateEmoji: cleanCateEmoji,
+        userId: String(userId),
         createTime: db.serverDate()
       }
     })
     
     return {
       success: true,
-      data: result,
+      data: { _id: result._id },
       message: '记账成功'
     }
   } catch (err) {
