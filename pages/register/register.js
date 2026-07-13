@@ -100,13 +100,12 @@ Page({
       return
     }
 
-      wx.showToast({ title: '注册成功,请登录', icon: 'none' })
-      setTimeout(() => {
-        wx.redirectTo({
-          url: `/pages/login/login?phone=${phone}`
-        })
-      }, 900)
-    }, 600)
+    wx.showToast({ title: '注册成功,请登录', icon: 'none' })
+    setTimeout(() => {
+      wx.redirectTo({
+        url: `/pages/login/login?phone=${phone}`
+      })
+    }, 900)
   },
 
   goLogin() {
