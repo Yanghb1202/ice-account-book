@@ -136,6 +136,46 @@
   </view>
 </view>
 
+<!-- AI趋势预测 -->
+<view class="ai-prediction-card" wx:if="{{totalRaw > 0 && predictionData}}">
+  <view class="card-title">
+    <text>🔮 AI趋势预测</text>
+  </view>
+  <view class="prediction-header">
+    <view class="prediction-trend">
+      <text class="trend-icon">{{predictionData.trend > 0 ? '📈' : predictionData.trend < 0 ? '📉' : '➡️'}}</text>
+      <text class="trend-text">{{predictionData.trendDesc}}</text>
+    </view>
+    <view class="prediction-value">
+      <text class="prediction-label">预计{{billType==0?'支出':'收入'}}</text>
+      <text class="prediction-money">¥{{predictionData.predictedTotal}}</text>
+    </view>
+  </view>
+  <view class="prediction-detail">
+    <view class="prediction-item">
+      <text class="prediction-item-label">已{{billType==0?'支出':'收入'}}</text>
+      <text class="prediction-item-value">¥{{predictionData.currentTotal}}</text>
+    </view>
+    <view class="prediction-item">
+      <text class="prediction-item-label">剩余{{billType==0?'预计支出':'预计收入'}}</text>
+      <text class="prediction-item-value">¥{{predictionData.remainingPrediction}}</text>
+    </view>
+    <view class="prediction-item">
+      <text class="prediction-item-label">趋势变化</text>
+      <text class="prediction-item-value {{predictionData.trend > 0 ? 'trend-up' : predictionData.trend < 0 ? 'trend-down' : ''}}">
+        {{predictionData.trend > 0 ? '+' : ''}}{{predictionData.trendPercent}}%
+      </text>
+    </view>
+  </view>
+  <view class="ai-analysis">
+    <view class="ai-analysis-header">
+      <text class="ai-icon">🤖</text>
+      <text class="ai-label">AI分析</text>
+    </view>
+    <text class="ai-analysis-text">{{predictionData.analysis}}</text>
+  </view>
+</view>
+
 <!-- 空状态 -->
 <view class="empty-block" wx:if="{{totalRaw <= 0}}">
   <view class="empty-emoji">📊</view>

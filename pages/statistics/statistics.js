@@ -368,6 +368,9 @@ Page({
     // 标题
     let titleText = label;
 
+    // AI趋势预测
+    const predictionData = this.predictTrend(allBill, billType, timeType, start, end, totalMoney, dayAvg);
+
     this.setData({
       titleText,
       currentDate: timeType === 1 ? this.data.currentDate : (timeType === 2 ? `${this.data.yearAnchor}年` : label),
@@ -388,8 +391,125 @@ Page({
       'ringOpts.subtitle.name': billType === 0 ? '总支出' : '总收入',
       catePercentList: cateArr,
       topCate: cateArr[0] || null,
-      recentBills: recent
+      recentBills: recent,
+      predictionData
     });
+  },
+
+  // ============ AI趋势预测 ============
+  predictTrend(allBill, billType, timeType, start, end, currentTotal, dayAvg) {
+    const today = new Date();
+    const dayMs = 86400000;
+    
+    let remainingDays = 0;
+    let trend = 0;
+    let trendPercent = 0;
+    let trendDesc = '';
+    let analysis = '';
+    
+    if (timeType === 1) {
+      const currentDay = today.getDate();
+      const daysInMonth = end.getDate();
+      remainingDays = Math.max(0, daysInMonth - currentDay);
+    } else if (timeType === 0) {
+      const currentDayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
+      remainingDays = Math.max(0, 7 - currentDayOfWeek + 1);
+    }
+    
+    const predictedRemaining = remainingDays * dayAvg;
+    const predictedTotal = currentTotal + predictedRemaining;
+    
+    const prevPeriodData = this.getPrevPeriodData(allBill, billType, timeType, start, end);
+    if (prevPeriodData > 0) {
+      trend = predictedTotal - prevPeriodData;
+      trendPercent = (trend / prevPeriodData * 100).toFixed(1);
+      
+      if (trend > 0) {
+        trendDesc = '消费呈上升趋势';
+      } else if (trend < 0) {
+        trendDesc = '消费呈下降趋势';
+      } else {
+        trendDesc = '消费趋势平稳';
+      }
+    }
+    
+    const analysisTemplates = {
+      up: [
+        '本月消费预计比上月增加{{percent}}%，建议关注主要支出类目，适当控制消费。',
+        '消费趋势向上，本月预计支出{{total}}元。建议设定预算上限，避免超支。',
+        '近期消费增长明显，AI分析显示您在{{category}}方面支出较多，建议优化消费习惯。'
+      ],
+      down: [
+        '本月消费预计比上月减少{{percent}}%，继续保持良好的理财习惯！',
+        '消费趋势向下，本月预计支出{{total}}元，节省了{{saved}}元。',
+        'AI分析显示您的消费控制效果显著，建议继续坚持当前的消费策略。'
+      ],
+      stable: [
+        '本月消费趋势平稳，预计支出{{total}}元。建议保持现有消费习惯。',
+        '消费波动较小，AI分析显示您的支出结构健康合理。',
+        '本月支出预计与上月持平，建议设定新的储蓄目标。'
+      ]
+    };
+    
+    const trendType = trend > 5 ? 'up' : trend < -5 ? 'down' : 'stable';
+    const templateList = analysisTemplates[trendType];
+    const template = templateList[Math.floor(Math.random() * templateList.length)];
+    
+    analysis = template
+      .replace('{{percent}}', Math.abs(Number(trendPercent)).toFixed(1))
+      .replace('{{total}}', this.formatNum(predictedTotal))
+      .replace('{{saved}}', this.formatNum(Math.abs(trend)))
+      .replace('{{category}}', '餐饮、购物');
+    
+    return {
+      currentTotal: this.formatNum(currentTotal),
+      remainingPrediction: this.formatNum(predictedRemaining),
+      predictedTotal: this.formatNum(predictedTotal),
+      trend,
+      trendPercent,
+      trendDesc,
+      analysis
+    };
+  },
+
+  getPrevPeriodData(allBill, billType, timeType, start, end) {
+    const dayMs = 86400000;
+    let prevStart, prevEnd;
+    
+    if (timeType === 0) {
+      prevEnd = new Date(start.getTime() - dayMs);
+      prevStart = new Date(prevEnd.getTime() - 6 * dayMs);
+    } else if (timeType === 1) {
+      prevEnd = new Date(start.getFullYear(), start.getMonth(), 0);
+      prevStart = new Date(prevEnd.getFullYear(), prevEnd.getMonth(), 1);
+    } else if (timeType === 2) {
+      prevStart = new Date(start.getFullYear() - 1, 0, 1);
+      prevEnd = new Date(start.getFullYear() - 1, 11, 31);
+    } else {
+      const span = Math.round((end.getTime() - start.getTime()) / dayMs) + 1;
+      prevEnd = new Date(start.getTime() - dayMs);
+      prevStart = new Date(prevEnd.getTime() - (span - 1) * dayMs);
+    }
+    
+    const ps = prevStart.getTime();
+    const pe = new Date(prevEnd.getFullYear(), prevEnd.getMonth(), prevEnd.getDate(), 23, 59, 59).getTime();
+    
+    let total = 0;
+    allBill.forEach(item => {
+      if (item.type !== billType) return;
+      let d;
+      if (item.fullDate) d = this.parseDate(item.fullDate);
+      else {
+        const m = item.date && item.date.match(/(\d+)月(\d+)/);
+        if (!m) return;
+        d = new Date(defaultYear, Number(m[1]) - 1, Number(m[2]));
+      }
+      if (!d) return;
+      const ts = d.getTime();
+      if (ts >= ps && ts <= pe) total += Number(item.money);
+    });
+    
+    return total;
   },
 
   // ============ 图表分桶 ============

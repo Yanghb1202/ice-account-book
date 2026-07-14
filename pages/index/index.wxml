@@ -61,10 +61,11 @@
       <text class="section-more">管理</text>
     </view>
     <view class="func-row">
-      <view class="func-item" wx:for="{{funcList}}" wx:key="name" bindtap="goPage" data-url="{{item.page}}">
+      <view class="func-item {{item.isAi ? 'ai-item' : ''}}" wx:for="{{funcList}}" wx:key="name" bindtap="goPage" data-url="{{item.page}}">
         <view class="func-icon">{{item.icon}}</view>
         <text class="func-name">{{item.name}}</text>
         <text class="func-desc">{{item.desc}}</text>
+        <view class="ai-badge" wx:if="{{item.isAi}}">AI</view>
       </view>
     </view>
   </view>

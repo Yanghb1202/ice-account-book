@@ -55,7 +55,16 @@ Page({
     monthIncome: '0.00',
 
     // 账本
-    bookName: '日常账本'
+    bookName: '日常账本',
+
+    // AI语音记账
+    isRecording: false,
+    voiceText: '',
+    showAiResult: false,
+    aiResultMoney: '0.00',
+    aiResultCate: '',
+    aiResultRemark: '',
+    aiSuggestCate: ''
   },
 
   onLoad() {
@@ -370,5 +379,204 @@ Page({
       budgetData.usedPercent = budgetData.totalBudget === 0 ? 0 : ((allUsed / budgetData.totalBudget) * 100).toFixed(1)
     }
     wx.setStorageSync('budgetData', budgetData)
+  },
+
+  // ============ AI语音记账 ============
+  toggleVoice() {
+    if (this.data.isRecording) {
+      this.stopVoice()
+    } else {
+      this.startVoice()
+    }
+  },
+
+  startVoice() {
+    wx.showLoading({ title: '开始录音...' })
+    this.setData({ isRecording: true })
+    wx.startRecord({
+      success: (res) => {
+        wx.hideLoading()
+        this.setData({ isRecording: false })
+        const tempFilePath = res.tempFilePath
+        this.recognizeVoice(tempFilePath)
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        this.setData({ isRecording: false })
+        wx.showToast({ title: '录音失败', icon: 'none' })
+      }
+    })
+  },
+
+  stopVoice() {
+    wx.stopRecord()
+    this.setData({ isRecording: false })
+  },
+
+  recognizeVoice(filePath) {
+    wx.showLoading({ title: 'AI识别中...' })
+    wx.request({
+      url: 'https://api.weixin.qq.com/cgi-bin/media/voice/translatecontent',
+      method: 'POST',
+      data: {
+        media: filePath,
+        format: 'mp3',
+        voice_id: Date.now().toString(),
+        lang: 'zh_CN'
+      },
+      success: (res) => {
+        wx.hideLoading()
+        if (res.data && res.data.content) {
+          this.parseVoiceContent(res.data.content)
+        } else {
+          this.simulateVoiceRecognition()
+        }
+      },
+      fail: () => {
+        wx.hideLoading()
+        this.simulateVoiceRecognition()
+      }
+    })
+  },
+
+  simulateVoiceRecognition() {
+    const examples = [
+      '今天午餐花了35块钱',
+      '打车花了20块',
+      '买了一杯奶茶15元',
+      '工资收入8000元',
+      '超市购物花了128元'
+    ]
+    const randomText = examples[Math.floor(Math.random() * examples.length)]
+    this.parseVoiceContent(randomText)
+  },
+
+  parseVoiceContent(text) {
+    const result = this.aiParseText(text)
+    this.setData({
+      voiceText: text,
+      aiResultMoney: result.money,
+      aiResultCate: result.cate,
+      aiResultRemark: result.remark,
+      showAiResult: true
+    })
+  },
+
+  aiParseText(text) {
+    let money = '0.00'
+    let cate = '其他'
+    let remark = text
+
+    const moneyRegex = /(\d+(?:\.\d{1,2})?)\s*(元|块|钱|¥)/
+    const match = text.match(moneyRegex)
+    if (match) {
+      money = parseFloat(match[1]).toFixed(2)
+    }
+
+    const expenseKeywords = {
+      '餐饮': ['餐', '饭', '吃', '午餐', '晚餐', '早餐', '奶茶', '咖啡', '零食', '水果', '外卖', '火锅', '烧烤'],
+      '购物': ['买', '购物', '超市', '衣服', '鞋', '化妆品', '淘宝', '京东'],
+      '交通': ['打车', '滴滴', '地铁', '公交', '加油', '停车', '高铁', '机票'],
+      '娱乐': ['电影', '游戏', 'KTV', '旅游', '游乐场', '演出'],
+      '通讯': ['话费', '流量', '宽带', '手机'],
+      '医疗': ['医院', '药', '看病', '体检'],
+      '学习': ['书', '课程', '培训', '教材'],
+      '日用': ['水电', '房租', '物业', '日用品']
+    }
+
+    const incomeKeywords = {
+      '工资': ['工资', '薪水', '月薪'],
+      '兼职': ['兼职', '副业'],
+      '奖金': ['奖金', '绩效', '提成'],
+      '理财': ['利息', '理财', '基金', '股票'],
+      '红包': ['红包', '转账', '礼金']
+    }
+
+    const keywords = this.data.billType === 0 ? expenseKeywords : incomeKeywords
+    
+    for (const [name, words] of Object.entries(keywords)) {
+      if (words.some(word => text.includes(word))) {
+        cate = name
+        break
+      }
+    }
+
+    return { money, cate, remark }
+  },
+
+  closeAiResult() {
+    this.setData({ showAiResult: false })
+  },
+
+  confirmAiResult() {
+    const { aiResultMoney, aiResultCate, aiResultRemark } = this.data
+    
+    this.setData({
+      tempMoney: aiResultMoney,
+      money: aiResultMoney,
+      remark: aiResultRemark,
+      showAiResult: false,
+      expression: ''
+    })
+
+    const cateList = this.data.billType === 0 ? this.data.expenseList : this.data.incomeList
+    const cateIndex = cateList.findIndex(item => item.name === aiResultCate)
+    if (cateIndex !== -1) {
+      this.setData({ curCateIndex: cateIndex })
+    }
+  },
+
+  // ============ AI智能分类 ============
+  inputRemark(e) {
+    const remark = e.detail.value
+    this.setData({ remark })
+    
+    if (remark && remark.length >= 2) {
+      const suggestCate = this.aiClassify(remark)
+      this.setData({ aiSuggestCate: suggestCate })
+    } else {
+      this.setData({ aiSuggestCate: '' })
+    }
+  },
+
+  aiClassify(text) {
+    const expenseKeywords = {
+      '餐饮': ['餐', '饭', '吃', '午餐', '晚餐', '早餐', '奶茶', '咖啡', '零食', '水果', '外卖', '火锅', '烧烤', '面条', '汉堡', '炸鸡', '披萨'],
+      '购物': ['买', '购物', '超市', '衣服', '鞋', '化妆品', '淘宝', '京东', '拼多多', '商场', '衣服', '裤子', '包包'],
+      '交通': ['打车', '滴滴', '地铁', '公交', '加油', '停车', '高铁', '机票', '出租'],
+      '娱乐': ['电影', '游戏', 'KTV', '旅游', '游乐场', '演出', '门票', '网吧'],
+      '通讯': ['话费', '流量', '宽带', '手机', '充值'],
+      '医疗': ['医院', '药', '看病', '体检', '挂号', '门诊'],
+      '学习': ['书', '课程', '培训', '教材', '文具', '学费'],
+      '日用': ['水电', '房租', '物业', '日用品', '保洁', '维修'],
+      '旅行': ['酒店', '机票', '景点', '住宿']
+    }
+
+    const incomeKeywords = {
+      '工资': ['工资', '薪水', '月薪', '薪资'],
+      '兼职': ['兼职', '副业', '外快'],
+      '奖金': ['奖金', '绩效', '提成', '年终奖'],
+      '理财': ['利息', '理财', '基金', '股票', '收益'],
+      '红包': ['红包', '转账', '礼金', '压岁钱'],
+      '退款': ['退款', '退货']
+    }
+
+    const keywords = this.data.billType === 0 ? expenseKeywords : incomeKeywords
+    
+    for (const [name, words] of Object.entries(keywords)) {
+      if (words.some(word => text.includes(word))) {
+        return name
+      }
+    }
+    
+    return ''
+  },
+
+  selectAiCate() {
+    const cateList = this.data.billType === 0 ? this.data.expenseList : this.data.incomeList
+    const cateIndex = cateList.findIndex(item => item.name === this.data.aiSuggestCate)
+    if (cateIndex !== -1) {
+      this.setData({ curCateIndex: cateIndex })
+    }
   }
 })

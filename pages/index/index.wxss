@@ -196,6 +196,7 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 .func-icon {
   width: 82rpx;
@@ -217,6 +218,23 @@ page {
   font-size: 20rpx;
   color: #aaa;
   margin-top: 4rpx;
+}
+
+.ai-badge {
+  position: absolute;
+  top: -4rpx;
+  right: -4rpx;
+  background: linear-gradient(135deg, #ffd66e 0%, #ffb22a 100%);
+  color: #222;
+  font-size: 18rpx;
+  font-weight: 700;
+  padding: 4rpx 10rpx;
+  border-radius: 12rpx;
+}
+
+.ai-item .func-icon {
+  background: linear-gradient(135deg, #ffe4a0 0%, #ffd66e 100%);
+  box-shadow: 0 4rpx 12rpx rgba(255, 178, 42, 0.3);
 }
 
 /* 预算 */

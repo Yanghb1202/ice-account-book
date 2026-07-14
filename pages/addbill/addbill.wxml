@@ -70,20 +70,57 @@
 
 <!-- 备注 + 日期 -->
 <view class="remark-row">
-  <input
-    class="remark-input"
-    placeholder="点击写备注..."
-    placeholder-class="remark-ph"
-    bindinput="inputRemark"
-    value="{{remark}}"
-    maxlength="30"
-  />
+  <view class="remark-input-wrap">
+    <input
+      class="remark-input"
+      placeholder="点击写备注..."
+      placeholder-class="remark-ph"
+      bindinput="inputRemark"
+      value="{{remark}}"
+      maxlength="30"
+    />
+    <view class="voice-btn {{isRecording ? 'recording' : ''}}" bindtap="toggleVoice">
+      <text>{{isRecording ? '⏹️' : '🎤'}}</text>
+    </view>
+    <view class="ai-cate-btn" wx:if="{{aiSuggestCate}}" bindtap="selectAiCate">
+      <text>🤖 {{aiSuggestCate}}</text>
+    </view>
+  </view>
   <picker mode="date" value="{{fullDate}}" bindchange="bindDateChange">
     <view class="date-box">
       <text class="date-icon">📅</text>
       <text>{{dateStr}}</text>
     </view>
   </picker>
+</view>
+
+<!-- AI识别结果弹窗 -->
+<view wx:if="{{showAiResult}}" class="ai-result-modal" bindtap="closeAiResult">
+  <view class="ai-result-content" catchtap="">
+    <view class="ai-result-header">
+      <text class="ai-result-title">🎤 语音识别结果</text>
+      <text class="ai-result-close" bindtap="closeAiResult">✕</text>
+    </view>
+    <view class="ai-result-text">{{voiceText}}</view>
+    <view class="ai-result-detail">
+      <view class="ai-result-item">
+        <text class="ai-result-label">金额</text>
+        <text class="ai-result-value">¥{{aiResultMoney}}</text>
+      </view>
+      <view class="ai-result-item">
+        <text class="ai-result-label">分类</text>
+        <text class="ai-result-value">{{aiResultCate}}</text>
+      </view>
+      <view class="ai-result-item">
+        <text class="ai-result-label">备注</text>
+        <text class="ai-result-value">{{aiResultRemark}}</text>
+      </view>
+    </view>
+    <view class="ai-result-btn-wrap">
+      <text class="ai-result-btn confirm" bindtap="confirmAiResult">确认使用</text>
+      <text class="ai-result-btn cancel" bindtap="closeAiResult">取消</text>
+    </view>
+  </view>
 </view>
 
 <!-- 常用备注 -->
