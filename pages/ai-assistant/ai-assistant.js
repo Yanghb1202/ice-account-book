@@ -31,8 +31,25 @@ Page({
       const savingGoals = this.generateSavingGoals(analysis)
       const budgetPrediction = this.predictBudget(analysis)
       
+      const displayData = {
+        totalExpense: analysis.totalExpense.toFixed(2),
+        totalIncome: analysis.totalIncome.toFixed(2),
+        balance: analysis.balance.toFixed(2),
+        balanceRaw: analysis.balance,
+        categoryList: analysis.categoryList.map(item => ({
+          name: item.name,
+          amount: item.amount.toFixed(2),
+          amountRaw: item.amount,
+          percent: item.percent
+        })),
+        avgDailyExpense: analysis.avgDailyExpense.toFixed(2),
+        billCount: analysis.billCount,
+        daysInMonth: analysis.daysInMonth,
+        currentDay: analysis.currentDay
+      }
+      
       this.setData({
-        analysisData: analysis,
+        analysisData: displayData,
         suggestions,
         savingGoals,
         budgetPrediction,
@@ -45,42 +62,63 @@ Page({
     }
   },
 
+  parseBillDate(item, currentYear) {
+    if (item.fullDate) {
+      try {
+        const arr = String(item.fullDate).split('-')
+        if (arr.length >= 3) {
+          return new Date(Number(arr[0]), Number(arr[1]) - 1, Number(arr[2]))
+        }
+        if (typeof item.fullDate === 'number') {
+          return new Date(item.fullDate)
+        }
+      } catch (e) {}
+    }
+    if (item.date) {
+      const m = item.date.match(/(\d+)月(\d+)日?/)
+      if (m) {
+        return new Date(currentYear, Number(m[1]) - 1, Number(m[2]))
+      }
+    }
+    return null
+  },
+
   analyzeBills(bills) {
     const now = new Date()
-    const currentMonth = now.getMonth() + 1
+    const currentMonth = now.getMonth()
     const currentYear = now.getFullYear()
     
-    const monthlyBills = bills.filter(bill => {
-      if (!bill.fullDate) return false
-      try {
-        const arr = String(bill.fullDate).split('-')
-        return arr.length >= 2 && Number(arr[0]) === currentYear && Number(arr[1]) === currentMonth
-      } catch (e) {
-        return false
+    let totalExpense = 0
+    let totalIncome = 0
+    const categoryExpenses = {}
+    const dailyExpenses = {}
+    let billCount = 0
+    
+    bills.forEach(item => {
+      const billDate = this.parseBillDate(item, currentYear)
+      if (!billDate) return
+      
+      const money = Number(item.money) || 0
+      const billType = item.billType !== undefined ? item.billType : (item.type !== undefined ? item.type : 0)
+      const isThisMonth = billDate.getFullYear() === currentYear && billDate.getMonth() === currentMonth
+      
+      if (isThisMonth) {
+        billCount++
+        if (billType === 0) {
+          totalExpense += money
+          const cate = item.cateName || '其他'
+          categoryExpenses[cate] = (categoryExpenses[cate] || 0) + money
+          const dateKey = `${billDate.getFullYear()}-${String(billDate.getMonth() + 1).padStart(2, '0')}-${String(billDate.getDate()).padStart(2, '0')}`
+          dailyExpenses[dateKey] = (dailyExpenses[dateKey] || 0) + money
+        } else {
+          totalIncome += money
+        }
       }
     })
     
-    const expenseBills = monthlyBills.filter(b => b.type === 0 || b.billType === 0)
-    const incomeBills = monthlyBills.filter(b => b.type === 1 || b.billType === 1)
-    
-    const totalExpense = expenseBills.reduce((sum, b) => sum + Number(b.money || 0), 0)
-    const totalIncome = incomeBills.reduce((sum, b) => sum + Number(b.money || 0), 0)
-    
-    const categoryExpenses = {}
-    expenseBills.forEach(bill => {
-      const cate = bill.cateName || '其他'
-      categoryExpenses[cate] = (categoryExpenses[cate] || 0) + Number(bill.money || 0)
-    })
-    
     const categoryList = Object.entries(categoryExpenses)
-      .map(([name, amount]) => ({ name, amount, percent: ((amount / totalExpense) * 100).toFixed(1) }))
+      .map(([name, amount]) => ({ name, amount, percent: totalExpense > 0 ? ((amount / totalExpense) * 100).toFixed(1) : '0' }))
       .sort((a, b) => b.amount - a.amount)
-    
-    const dailyExpenses = {}
-    expenseBills.forEach(bill => {
-      const date = bill.fullDate || bill.date
-      dailyExpenses[date] = (dailyExpenses[date] || 0) + Number(bill.money || 0)
-    })
     
     const avgDailyExpense = Object.keys(dailyExpenses).length > 0 
       ? totalExpense / Object.keys(dailyExpenses).length 
@@ -90,8 +128,6 @@ Page({
       ? Math.max(...Object.values(dailyExpenses)) 
       : 0
     
-    const billCount = monthlyBills.length
-    
     return {
       totalExpense,
       totalIncome,
@@ -100,7 +136,7 @@ Page({
       avgDailyExpense,
       maxDailyExpense,
       billCount,
-      daysInMonth: new Date(currentYear, currentMonth, 0).getDate(),
+      daysInMonth: new Date(currentYear, currentMonth + 1, 0).getDate(),
       currentDay: now.getDate()
     }
   },
