@@ -26,7 +26,8 @@
     "pages/set/set",
     "pages/billDetail/billDetail",
     "pages/asset/asset",
-    "pages/billList/billList"
+    "pages/billList/billList",
+    "pages/ai-assistant/ai-assistant"
   ],
   "window": {
     "backgroundTextStyle": "light",

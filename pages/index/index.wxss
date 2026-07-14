@@ -192,7 +192,7 @@ page {
   justify-content: space-between;
 }
 .func-item {
-  width: 20%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;

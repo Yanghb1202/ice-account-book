@@ -1,0 +1,141 @@
+<view class="page-wrap">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px; height: {{statusBarHeight + navBarHeight}}px;">
+    <view class="nav-title">AI智能理财助手</view>
+    <view class="nav-right">
+      <view class="refresh-btn" bindtap="refresh">
+        <text>🔄</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="content" style="padding-top: {{statusBarHeight + navBarHeight}}px;">
+    <view wx:if="{{isLoading}}" class="loading">
+      <view class="loading-icon">🤖</view>
+      <text class="loading-text">AI正在分析您的财务数据...</text>
+    </view>
+
+    <view wx:else>
+      <view class="ai-header">
+        <view class="ai-avatar">{{aiAvatar}}</view>
+        <view class="ai-info">
+          <text class="ai-name">{{aiName}}</text>
+          <text class="ai-desc">基于您的消费数据，为您提供个性化理财建议</text>
+        </view>
+      </view>
+
+      <view class="summary-cards">
+        <view class="summary-card expense">
+          <view class="card-icon">📉</view>
+          <view class="card-info">
+            <text class="card-label">本月支出</text>
+            <text class="card-value">¥{{analysisData.totalExpense.toFixed(2)}}</text>
+          </view>
+        </view>
+        <view class="summary-card income">
+          <view class="card-icon">📈</view>
+          <view class="card-info">
+            <text class="card-label">本月收入</text>
+            <text class="card-value">¥{{analysisData.totalIncome.toFixed(2)}}</text>
+          </view>
+        </view>
+        <view class="summary-card balance">
+          <view class="card-icon">💰</view>
+          <view class="card-info">
+            <text class="card-label">本月结余</text>
+            <text class="card-value" style="color: {{analysisData.balance >= 0 ? '#52c41a' : '#ff4d4f'}};">
+              {{analysisData.balance >= 0 ? '+' : ''}}¥{{analysisData.balance.toFixed(2)}}
+            </text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-header">
+          <text class="section-title">📊 消费分析</text>
+          <text class="section-action" bindtap="goToStatistics">查看详情</text>
+        </view>
+        
+        <view class="category-list">
+          <view wx:for="{{analysisData.categoryList}}" wx:key="name" class="category-item">
+            <view class="category-bar-wrap">
+              <view class="category-bar" style="width: {{item.percent}}%;" data-cate="{{item.name}}"></view>
+            </view>
+            <view class="category-info">
+              <text class="category-name">{{item.name}}</text>
+              <text class="category-amount">¥{{item.amount.toFixed(2)}} ({{item.percent}}%)</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-header">
+          <text class="section-title">💡 AI理财建议</text>
+        </view>
+        
+        <view class="suggestion-list">
+          <view wx:for="{{suggestions}}" wx:key="index" class="suggestion-item" bindtap="showDetail" data-index="{{index}}" data-type="suggestion">
+            <view class="suggestion-icon">{{item.icon}}</view>
+            <view class="suggestion-content">
+              <text class="suggestion-title">{{item.title}}</text>
+              <text class="suggestion-desc">{{item.desc}}</text>
+            </view>
+            <view class="suggestion-arrow">›</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-header">
+          <text class="section-title">🎯 推荐省钱目标</text>
+        </view>
+        
+        <view class="goal-list">
+          <view wx:for="{{savingGoals}}" wx:key="index" class="goal-item" bindtap="showDetail" data-index="{{index}}" data-type="goal">
+            <view class="goal-icon">{{item.icon}}</view>
+            <view class="goal-content">
+              <text class="goal-name">{{item.name}}</text>
+              <text class="goal-desc">{{item.desc}}</text>
+            </view>
+            <view class="goal-arrow">›</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-header">
+          <text class="section-title">🔮 预算预测</text>
+          <text class="section-action" bindtap="goToBudget">设置预算</text>
+        </view>
+        
+        <view class="prediction-card">
+          <view class="prediction-item">
+            <text class="prediction-label">剩余天数</text>
+            <text class="prediction-value">{{budgetPrediction.remainingDays}}天</text>
+          </view>
+          <view class="prediction-item">
+            <text class="prediction-label">日均消费</text>
+            <text class="prediction-value">¥{{budgetPrediction.avgDaily}}</text>
+          </view>
+          <view class="prediction-item">
+            <text class="prediction-label">预计剩余支出</text>
+            <text class="prediction-value">¥{{budgetPrediction.predictedRemaining}}</text>
+          </view>
+          <view class="prediction-total">
+            <text class="prediction-total-label">本月预计总支出</text>
+            <text class="prediction-total-value">¥{{budgetPrediction.totalPredicted}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showDetail}}" class="detail-modal" bindtap="closeDetail">
+    <view class="detail-content" catchtap="">
+      <view class="detail-icon">{{currentDetail.icon}}</view>
+      <text class="detail-title">{{currentDetail.title || currentDetail.name}}</text>
+      <text class="detail-desc">{{currentDetail.detail || currentDetail.reason}}</text>
+      <view class="detail-close" bindtap="closeDetail">确定</view>
+    </view>
+  </view>
+</view>

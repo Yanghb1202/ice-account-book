@@ -9,6 +9,7 @@ Page({
 
     funcList: [
       { icon: '🧾', name: '记账', desc: '快速记录', page: '/pages/addbill/addbill' },
+      { icon: '🤖', name: 'AI助手', desc: '智能理财', page: '/pages/ai-assistant/ai-assistant' },
       { icon: '📊', name: '统计', desc: '收支分析', page: '/pages/statistics/statistics' },
       { icon: '💰', name: '预算', desc: '控制花费', page: '/pages/budget/budget' },
       { icon: '🏦', name: '资产', desc: '资产总览', page: '/pages/asset/asset' },
