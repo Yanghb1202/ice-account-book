@@ -2,6 +2,8 @@
 const app = getApp()
 const DB = require('../../utils/db.js')
 
+const plugin = requirePlugin('WechatSI')
+
 Page({
   data: {
     statusBarHeight: 20,
@@ -391,64 +393,39 @@ Page({
   },
 
   startVoice() {
-    wx.showLoading({ title: '开始录音...' })
+    wx.showLoading({ title: '请说话...', mask: true })
     this.setData({ isRecording: true })
-    wx.startRecord({
-      success: (res) => {
+    
+    plugin.startRecord({
+      lang: 'zh_CN',
+      complete: (res) => {
         wx.hideLoading()
         this.setData({ isRecording: false })
-        const tempFilePath = res.tempFilePath
-        this.recognizeVoice(tempFilePath)
+        
+        if (res.result && res.result.text) {
+          this.parseVoiceContent(res.result.text)
+        } else if (res.retcode === -10001) {
+          wx.showToast({ title: '未检测到声音', icon: 'none' })
+        } else if (res.retcode === -10002) {
+          wx.showToast({ title: '录音时间过长', icon: 'none' })
+        } else if (res.retcode === -10003) {
+          wx.showToast({ title: '网络错误', icon: 'none' })
+        } else {
+          wx.showToast({ title: '识别失败，请重试', icon: 'none' })
+        }
       },
-      fail: (err) => {
+      error: (err) => {
         wx.hideLoading()
         this.setData({ isRecording: false })
-        wx.showToast({ title: '录音失败', icon: 'none' })
+        wx.showToast({ title: '录音异常: ' + err.errMsg, icon: 'none' })
       }
     })
   },
 
   stopVoice() {
-    wx.stopRecord()
+    plugin.stopRecord()
     this.setData({ isRecording: false })
-  },
-
-  recognizeVoice(filePath) {
-    wx.showLoading({ title: 'AI识别中...' })
-    wx.request({
-      url: 'https://api.weixin.qq.com/cgi-bin/media/voice/translatecontent',
-      method: 'POST',
-      data: {
-        media: filePath,
-        format: 'mp3',
-        voice_id: Date.now().toString(),
-        lang: 'zh_CN'
-      },
-      success: (res) => {
-        wx.hideLoading()
-        if (res.data && res.data.content) {
-          this.parseVoiceContent(res.data.content)
-        } else {
-          this.simulateVoiceRecognition()
-        }
-      },
-      fail: () => {
-        wx.hideLoading()
-        this.simulateVoiceRecognition()
-      }
-    })
-  },
-
-  simulateVoiceRecognition() {
-    const examples = [
-      '今天午餐花了35块钱',
-      '打车花了20块',
-      '买了一杯奶茶15元',
-      '工资收入8000元',
-      '超市购物花了128元'
-    ]
-    const randomText = examples[Math.floor(Math.random() * examples.length)]
-    this.parseVoiceContent(randomText)
+    wx.hideLoading()
   },
 
   parseVoiceContent(text) {
@@ -467,29 +444,28 @@ Page({
     let cate = '其他'
     let remark = text
 
-    const moneyRegex = /(\d+(?:\.\d{1,2})?)\s*(元|块|钱|¥)/
-    const match = text.match(moneyRegex)
-    if (match) {
-      money = parseFloat(match[1]).toFixed(2)
-    }
+    money = this.extractMoney(text)
 
     const expenseKeywords = {
-      '餐饮': ['餐', '饭', '吃', '午餐', '晚餐', '早餐', '奶茶', '咖啡', '零食', '水果', '外卖', '火锅', '烧烤'],
-      '购物': ['买', '购物', '超市', '衣服', '鞋', '化妆品', '淘宝', '京东'],
-      '交通': ['打车', '滴滴', '地铁', '公交', '加油', '停车', '高铁', '机票'],
-      '娱乐': ['电影', '游戏', 'KTV', '旅游', '游乐场', '演出'],
-      '通讯': ['话费', '流量', '宽带', '手机'],
-      '医疗': ['医院', '药', '看病', '体检'],
-      '学习': ['书', '课程', '培训', '教材'],
-      '日用': ['水电', '房租', '物业', '日用品']
+      '餐饮': ['餐', '饭', '吃', '午餐', '晚餐', '早餐', '奶茶', '咖啡', '零食', '水果', '外卖', '火锅', '烧烤', '麻辣烫', '汉堡', '披萨', '蛋糕', '甜品', '饮料', '酒水', '食堂', '餐馆', '饭店', '面馆', '早点', '下午茶'],
+      '购物': ['买', '购物', '超市', '衣服', '鞋', '化妆品', '淘宝', '京东', '拼多多', '唯品会', '商场', '专柜', '衣服', '裤子', '包包', '饰品', '数码', '电器', '家具', '日用品', '百货'],
+      '交通': ['打车', '滴滴', '地铁', '公交', '加油', '停车', '高铁', '机票', '火车票', '租车', '网约车', '自行车', '共享单车', '过路费', '高速费'],
+      '娱乐': ['电影', '游戏', 'KTV', '旅游', '游乐场', '演出', '演唱会', '话剧', '音乐会', '酒吧', '网咖', '桌游', '剧本杀', '密室逃脱', '游乐园'],
+      '通讯': ['话费', '流量', '宽带', '手机', '电话', '充值', '套餐'],
+      '医疗': ['医院', '药', '看病', '体检', '挂号', '门诊', '住院', '买药', '药店', '疫苗'],
+      '学习': ['书', '课程', '培训', '教材', '学费', '书本', '文具', '考研', '考公', '证书', '网课', '教育'],
+      '日用': ['水电', '房租', '物业', '日用品', '电费', '水费', '燃气', '网费', '物业费', '维修', '清洁'],
+      '旅行': ['旅行', '旅游', '酒店', '民宿', '景点', '门票', '机票', '车票']
     }
 
     const incomeKeywords = {
-      '工资': ['工资', '薪水', '月薪'],
-      '兼职': ['兼职', '副业'],
-      '奖金': ['奖金', '绩效', '提成'],
-      '理财': ['利息', '理财', '基金', '股票'],
-      '红包': ['红包', '转账', '礼金']
+      '工资': ['工资', '薪水', '月薪', '年薪', '底薪', '发工资'],
+      '兼职': ['兼职', '副业', '外快', '零时工', '跑腿'],
+      '奖金': ['奖金', '绩效', '提成', '年终奖', '项目奖', '全勤奖'],
+      '理财': ['利息', '理财', '基金', '股票', '分红', '收益', '利息', '存款'],
+      '红包': ['红包', '转账', '礼金', '压岁钱', '份子钱'],
+      '退款': ['退款', '退货', '返还', '报销'],
+      '转账': ['转账', '汇款', '收款']
     }
 
     const keywords = this.data.billType === 0 ? expenseKeywords : incomeKeywords
@@ -502,6 +478,71 @@ Page({
     }
 
     return { money, cate, remark }
+  },
+
+  extractMoney(text) {
+    const unitMap = { '百': 100, '千': 1000, '万': 10000, '亿': 100000000 }
+    
+    const digitRegex = /(\d+(?:\.\d{1,2})?)\s*(元|块|钱|¥|百|千|万|亿)/g
+    let total = 0
+    let match
+    
+    while ((match = digitRegex.exec(text)) !== null) {
+      const num = parseFloat(match[1])
+      const unit = match[2]
+      
+      if (unitMap[unit]) {
+        total += num * unitMap[unit]
+      } else {
+        total += num
+      }
+    }
+
+    if (total > 0) {
+      return total.toFixed(2)
+    }
+
+    const chineseNumRegex = /([零一二三四五六七八九十百千万亿]+)\s*(元|块|钱)/
+    const chineseMatch = text.match(chineseNumRegex)
+    if (chineseMatch) {
+      const chineseNum = this.chineseToArabic(chineseMatch[1])
+      if (chineseNum > 0) {
+        return chineseNum.toFixed(2)
+      }
+    }
+
+    return '0.00'
+  },
+
+  chineseToArabic(chinese) {
+    const numMap = { '零': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9 }
+    const unitMap = { '十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000 }
+    
+    let result = 0
+    let temp = 0
+    
+    for (let i = 0; i < chinese.length; i++) {
+      const char = chinese[i]
+      if (numMap[char] !== undefined) {
+        temp = numMap[char]
+      } else if (unitMap[char] !== undefined) {
+        const unit = unitMap[char]
+        if (temp === 0) {
+          temp = 1
+        }
+        if (unit === 10000 || unit === 100000000) {
+          result = (result + temp) * unit
+          temp = 0
+        } else {
+          temp *= unit
+          result += temp
+          temp = 0
+        }
+      }
+    }
+    
+    result += temp
+    return result
   },
 
   closeAiResult() {
