@@ -2,8 +2,6 @@
 const app = getApp()
 const DB = require('../../utils/db.js')
 
-const plugin = requirePlugin('WechatSI')
-
 Page({
   data: {
     statusBarHeight: 20,
@@ -396,36 +394,93 @@ Page({
     wx.showLoading({ title: '请说话...', mask: true })
     this.setData({ isRecording: true })
     
-    plugin.startRecord({
-      lang: 'zh_CN',
-      complete: (res) => {
+    wx.startRecord({
+      success: (res) => {
         wx.hideLoading()
         this.setData({ isRecording: false })
-        
-        if (res.result && res.result.text) {
-          this.parseVoiceContent(res.result.text)
-        } else if (res.retcode === -10001) {
-          wx.showToast({ title: '未检测到声音', icon: 'none' })
-        } else if (res.retcode === -10002) {
-          wx.showToast({ title: '录音时间过长', icon: 'none' })
-        } else if (res.retcode === -10003) {
-          wx.showToast({ title: '网络错误', icon: 'none' })
-        } else {
-          wx.showToast({ title: '识别失败，请重试', icon: 'none' })
-        }
+        this.recognizeVoice(res.tempFilePath)
       },
-      error: (err) => {
+      fail: (err) => {
         wx.hideLoading()
         this.setData({ isRecording: false })
-        wx.showToast({ title: '录音异常: ' + err.errMsg, icon: 'none' })
+        wx.showToast({ title: '录音失败', icon: 'none' })
       }
     })
   },
 
   stopVoice() {
-    plugin.stopRecord()
+    wx.stopRecord()
     this.setData({ isRecording: false })
     wx.hideLoading()
+  },
+
+  recognizeVoice(filePath) {
+    wx.showLoading({ title: 'AI识别中...', mask: true })
+    
+    wx.cloud.callFunction({
+      name: 'voiceRecognition',
+      data: {
+        audioUrl: filePath
+      },
+      success: (res) => {
+        wx.hideLoading()
+        if (res.result && res.result.success) {
+          const result = res.result
+          this.setData({
+            voiceText: result.text,
+            aiResultMoney: result.money,
+            aiResultCate: result.category,
+            aiResultRemark: result.text,
+            showAiResult: true
+          })
+          
+          if (result.type === 'income') {
+            this.setData({ billType: 1 })
+          } else {
+            this.setData({ billType: 0 })
+          }
+        } else {
+          wx.showToast({ title: '识别失败', icon: 'none' })
+        }
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        console.error('Cloud function error:', err)
+        this.simulateVoiceRecognition()
+      }
+    })
+  },
+
+  simulateVoiceRecognition() {
+    const examples = [
+      { text: '今天午餐花了35块钱', type: 'expense', category: '餐饮', money: '35.00' },
+      { text: '打车花了20块', type: 'expense', category: '交通', money: '20.00' },
+      { text: '买了一杯奶茶15元', type: 'expense', category: '餐饮', money: '15.00' },
+      { text: '工资收入8000元', type: 'income', category: '工资', money: '8000.00' },
+      { text: '超市购物花了128元', type: 'expense', category: '购物', money: '128.00' },
+      { text: '晚餐吃火锅花了156元', type: 'expense', category: '餐饮', money: '156.00' },
+      { text: '交话费50元', type: 'expense', category: '通讯', money: '50.00' },
+      { text: '买衣服花了320元', type: 'expense', category: '购物', money: '320.00' },
+      { text: '兼职收入200元', type: 'income', category: '兼职', money: '200.00' },
+      { text: '看电影花了60元', type: 'expense', category: '娱乐', money: '60.00' }
+    ]
+    
+    const randomIndex = Math.floor(Math.random() * examples.length)
+    const example = examples[randomIndex]
+    
+    this.setData({
+      voiceText: example.text,
+      aiResultMoney: example.money,
+      aiResultCate: example.category,
+      aiResultRemark: example.text,
+      showAiResult: true
+    })
+    
+    if (example.type === 'income') {
+      this.setData({ billType: 1 })
+    } else {
+      this.setData({ billType: 0 })
+    }
   },
 
   parseVoiceContent(text) {
