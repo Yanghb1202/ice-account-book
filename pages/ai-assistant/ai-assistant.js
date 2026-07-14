@@ -2,9 +2,6 @@ const DB = require('../../utils/db.js')
 
 Page({
   data: {
-    statusBarHeight: 20,
-    navBarHeight: 44,
-    
     isLoading: true,
     aiAvatar: '🤖',
     aiName: '智能理财助手',
@@ -19,18 +16,7 @@ Page({
   },
 
   onLoad() {
-    this.initNavBar()
     this.loadAnalysisData()
-  },
-
-  initNavBar() {
-    try {
-      const sys = wx.getSystemInfoSync()
-      const menu = wx.getMenuButtonBoundingClientRect ? wx.getMenuButtonBoundingClientRect() : null
-      const sb = sys.statusBarHeight || 20
-      const navH = menu ? (menu.top - sb) * 2 + menu.height : 44
-      this.setData({ statusBarHeight: sb, navBarHeight: navH })
-    } catch (e) {}
   },
 
   async loadAnalysisData() {

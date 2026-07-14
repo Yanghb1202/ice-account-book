@@ -1,14 +1,5 @@
 <view class="page-wrap">
-  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px; height: {{statusBarHeight + navBarHeight}}px;">
-    <view class="nav-title">AI智能理财助手</view>
-    <view class="nav-right">
-      <view class="refresh-btn" bindtap="refresh">
-        <text>🔄</text>
-      </view>
-    </view>
-  </view>
-
-  <view class="content" style="padding-top: {{statusBarHeight + navBarHeight}}px;">
+  <view class="content">
     <view wx:if="{{isLoading}}" class="loading">
       <view class="loading-icon">🤖</view>
       <text class="loading-text">AI正在分析您的财务数据...</text>
