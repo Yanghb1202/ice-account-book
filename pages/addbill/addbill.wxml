@@ -109,7 +109,9 @@
         placeholder="请输入语音内容..." 
         bindinput="onVoiceInput"
       />
-      <text class="ai-input-btn" bindtap="reParseVoice">🔄 重新解析</text>
+      <view class="ai-input-btn-wrap">
+        <text class="ai-input-btn" bindtap="reParseVoice">🔄 重新解析</text>
+      </view>
     </view>
     <view class="ai-result-detail">
       <view class="ai-result-item">

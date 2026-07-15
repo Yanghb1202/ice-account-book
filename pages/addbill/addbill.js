@@ -615,7 +615,8 @@ Page({
     this.setData({
       aiResultMoney: result.money,
       aiResultCate: result.cate,
-      aiResultRemark: result.remark
+      aiResultRemark: result.remark,
+      billType: result.type === 'income' ? 1 : 0
     })
   },
 
@@ -623,6 +624,7 @@ Page({
     let money = '0.00'
     let cate = '其他'
     let remark = text
+    let type = 'expense'
 
     money = this.extractMoney(text)
 
@@ -648,16 +650,38 @@ Page({
       '转账': ['转账', '汇款', '收款']
     }
 
-    const keywords = this.data.billType === 0 ? expenseKeywords : incomeKeywords
-    
-    for (const [name, words] of Object.entries(keywords)) {
-      if (words.some(word => text.includes(word))) {
-        cate = name
-        break
+    const allIncomeWords = Object.values(incomeKeywords).flat()
+    const allExpenseWords = Object.values(expenseKeywords).flat()
+
+    let incomeMatchCount = 0
+    let expenseMatchCount = 0
+
+    allIncomeWords.forEach(word => {
+      if (text.includes(word)) incomeMatchCount++
+    })
+    allExpenseWords.forEach(word => {
+      if (text.includes(word)) expenseMatchCount++
+    })
+
+    if (incomeMatchCount > expenseMatchCount) {
+      type = 'income'
+      for (const [name, words] of Object.entries(incomeKeywords)) {
+        if (words.some(word => text.includes(word))) {
+          cate = name
+          break
+        }
+      }
+    } else {
+      type = 'expense'
+      for (const [name, words] of Object.entries(expenseKeywords)) {
+        if (words.some(word => text.includes(word))) {
+          cate = name
+          break
+        }
       }
     }
 
-    return { money, cate, remark }
+    return { money, cate, remark, type }
   },
 
   extractMoney(text) {
