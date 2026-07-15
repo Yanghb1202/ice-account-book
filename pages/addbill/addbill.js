@@ -2,6 +2,8 @@
 const app = getApp()
 const DB = require('../../utils/db.js')
 
+const recorderManager = wx.getRecorderManager()
+
 Page({
   data: {
     statusBarHeight: 20,
@@ -86,6 +88,25 @@ Page({
       dateStr: `${m}月${d}日`,
       fullDate: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`,
       cateList: this.data.expenseList
+    })
+
+    // 初始化录音管理器
+    recorderManager.onStart(() => {
+      console.log('录音开始')
+    })
+
+    recorderManager.onStop((res) => {
+      console.log('录音结束', res)
+      wx.hideLoading()
+      this.setData({ isRecording: false })
+      this.recognizeVoice(res.tempFilePath)
+    })
+
+    recorderManager.onError((err) => {
+      console.error('录音错误', err)
+      wx.hideLoading()
+      this.setData({ isRecording: false })
+      wx.showToast({ title: '录音失败', icon: 'none' })
     })
   },
 
@@ -391,27 +412,21 @@ Page({
   },
 
   startVoice() {
-    wx.showLoading({ title: '请说话...', mask: true })
+    wx.showToast({ title: '请说话...', icon: 'none', duration: 2000 })
     this.setData({ isRecording: true })
     
-    wx.startRecord({
-      success: (res) => {
-        wx.hideLoading()
-        this.setData({ isRecording: false })
-        this.recognizeVoice(res.tempFilePath)
-      },
-      fail: (err) => {
-        wx.hideLoading()
-        this.setData({ isRecording: false })
-        wx.showToast({ title: '录音失败', icon: 'none' })
-      }
+    recorderManager.start({
+      duration: 60000,
+      sampleRate: 16000,
+      numberOfChannels: 1,
+      encodeBitRate: 48000,
+      format: 'mp3'
     })
   },
 
   stopVoice() {
-    wx.stopRecord()
+    recorderManager.stop()
     this.setData({ isRecording: false })
-    wx.hideLoading()
   },
 
   recognizeVoice(filePath) {
