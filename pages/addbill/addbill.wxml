@@ -79,9 +79,7 @@
       value="{{remark}}"
       maxlength="30"
     />
-    <view class="voice-btn {{isRecording ? 'recording' : ''}}" bindtap="toggleVoice">
-      <text>{{isRecording ? '⏹️' : '🎤'}}</text>
-    </view>
+
     <view class="ai-cate-btn" wx:if="{{aiSuggestCate}}" bindtap="selectAiCate">
       <text>🤖 {{aiSuggestCate}}</text>
     </view>
@@ -94,45 +92,7 @@
   </picker>
 </view>
 
-<!-- AI识别结果弹窗 -->
-<view wx:if="{{showAiResult}}" class="ai-result-modal" bindtap="closeAiResult">
-  <view class="ai-result-content" catchtap="">
-    <view class="ai-result-header">
-      <text class="ai-result-title">🎤 AI语音识别</text>
-      <text class="ai-result-close" bindtap="closeAiResult">✕</text>
-    </view>
-    <view class="ai-input-section">
-      <text class="ai-input-label">输入内容（如：今天午餐花了35元）</text>
-      <input 
-        class="ai-input" 
-        value="{{voiceText}}" 
-        placeholder="请输入语音内容..." 
-        bindinput="onVoiceInput"
-      />
-      <view class="ai-input-btn-wrap">
-        <text class="ai-input-btn" bindtap="reParseVoice">🔄 重新解析</text>
-      </view>
-    </view>
-    <view class="ai-result-detail">
-      <view class="ai-result-item">
-        <text class="ai-result-label">金额</text>
-        <text class="ai-result-value">¥{{aiResultMoney}}</text>
-      </view>
-      <view class="ai-result-item">
-        <text class="ai-result-label">分类</text>
-        <text class="ai-result-value">{{aiResultCate}}</text>
-      </view>
-      <view class="ai-result-item">
-        <text class="ai-result-label">备注</text>
-        <text class="ai-result-value">{{aiResultRemark}}</text>
-      </view>
-    </view>
-    <view class="ai-result-btn-wrap">
-      <text class="ai-result-btn confirm" bindtap="confirmAiResult">确认使用</text>
-      <text class="ai-result-btn cancel" bindtap="closeAiResult">取消</text>
-    </view>
-  </view>
-</view>
+
 
 <!-- 常用备注 -->
 <scroll-view scroll-x="true" class="quick-remark-wrap" wx:if="{{billType===0}}">

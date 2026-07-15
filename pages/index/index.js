@@ -8,7 +8,7 @@ Page({
     userName: '',
 
     funcList: [
-      { icon: '🧾', name: '记账', desc: '语音/AI分类', page: '/pages/addbill/addbill', isAi: true },
+      { icon: '🧾', name: '记账', desc: 'AI智能分类', page: '/pages/addbill/addbill', isAi: true },
       { icon: '🤖', name: 'AI助手', desc: '智能理财', page: '/pages/ai-assistant/ai-assistant', isAi: true },
       { icon: '📊', name: '统计', desc: '趋势预测', page: '/pages/statistics/statistics', isAi: true },
       { icon: '💰', name: '预算', desc: '控制花费', page: '/pages/budget/budget' },
