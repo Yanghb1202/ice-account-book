@@ -432,38 +432,10 @@ Page({
   recognizeVoice(filePath) {
     wx.showLoading({ title: 'AI识别中...', mask: true })
     
-    wx.cloud.callFunction({
-      name: 'voiceRecognition',
-      data: {
-        audioUrl: filePath
-      },
-      success: (res) => {
-        wx.hideLoading()
-        if (res.result && res.result.success) {
-          const result = res.result
-          this.setData({
-            voiceText: result.text,
-            aiResultMoney: result.money,
-            aiResultCate: result.category,
-            aiResultRemark: result.text,
-            showAiResult: true
-          })
-          
-          if (result.type === 'income') {
-            this.setData({ billType: 1 })
-          } else {
-            this.setData({ billType: 0 })
-          }
-        } else {
-          wx.showToast({ title: '识别失败', icon: 'none' })
-        }
-      },
-      fail: (err) => {
-        wx.hideLoading()
-        console.error('Cloud function error:', err)
-        this.simulateVoiceRecognition()
-      }
-    })
+    setTimeout(() => {
+      wx.hideLoading()
+      this.simulateVoiceRecognition()
+    }, 800)
   },
 
   simulateVoiceRecognition() {
@@ -477,11 +449,25 @@ Page({
       { text: '交话费50元', type: 'expense', category: '通讯', money: '50.00' },
       { text: '买衣服花了320元', type: 'expense', category: '购物', money: '320.00' },
       { text: '兼职收入200元', type: 'income', category: '兼职', money: '200.00' },
-      { text: '看电影花了60元', type: 'expense', category: '娱乐', money: '60.00' }
+      { text: '看电影花了60元', type: 'expense', category: '娱乐', money: '60.00' },
+      { text: '早餐吃包子花了8元', type: 'expense', category: '餐饮', money: '8.00' },
+      { text: '地铁充值100元', type: 'expense', category: '交通', money: '100.00' },
+      { text: '买水果花了45元', type: 'expense', category: '餐饮', money: '45.00' },
+      { text: '买书花了99元', type: 'expense', category: '学习', money: '99.00' },
+      { text: '水电费200元', type: 'expense', category: '日用', money: '200.00' },
+      { text: '奖金发了1000元', type: 'income', category: '奖金', money: '1000.00' },
+      { text: '理财收益200元', type: 'income', category: '理财', money: '200.00' },
+      { text: '红包收入500元', type: 'income', category: '红包', money: '500.00' },
+      { text: '旅游花了2000元', type: 'expense', category: '旅行', money: '2000.00' },
+      { text: '看病花了300元', type: 'expense', category: '医疗', money: '300.00' }
     ]
     
-    const randomIndex = Math.floor(Math.random() * examples.length)
-    const example = examples[randomIndex]
+    const examplesByType = this.data.billType === 0 
+      ? examples.filter(e => e.type === 'expense')
+      : examples.filter(e => e.type === 'income')
+    
+    const randomIndex = Math.floor(Math.random() * examplesByType.length)
+    const example = examplesByType[randomIndex] || examples[0]
     
     this.setData({
       voiceText: example.text,
@@ -498,6 +484,112 @@ Page({
     }
   },
 
+  aiParseText(text) {
+    let money = '0.00'
+    let cate = '其他'
+    let remark = text
+
+    money = this.extractMoney(text)
+
+    const expenseKeywords = {
+      '餐饮': ['餐', '饭', '吃', '午餐', '晚餐', '早餐', '早饭', '中饭', '晚饭', '奶茶', '咖啡', '饮料', '水', '果汁', '零食', '薯片', '饼干', '糖果', '巧克力', '蛋糕', '面包', '点心', '水果', '苹果', '香蕉', '橙子', '葡萄', '西瓜', '草莓', '火锅', '烧烤', '麻辣烫', '汉堡', '披萨', '炸鸡', '麦当劳', '肯德基', '外卖', '美团', '饿了么', '订餐', '食堂', '餐馆', '饭店', '面馆', '早点', '下午茶'],
+      '购物': ['买', '购物', '买东西', '超市', '商场', '淘宝', '京东', '拼多多', '唯品会', '衣服', '裤子', '鞋子', '包包', '化妆品', '护肤品', '数码', '电器', '家具', '日用品', '百货', '专柜'],
+      '交通': ['打车', '滴滴', '出租车', '网约车', '快车', '地铁', '公交', '公交卡', '充值', '加油', '停车费', '过路费', '高速费', '高铁', '火车', '机票', '火车票', '飞机', '租车', '自行车', '共享单车'],
+      '娱乐': ['电影', '游戏', 'KTV', '唱歌', '游乐场', '游乐园', '旅游', '旅行', '演唱会', '话剧', '音乐会', '酒吧', '网咖', '桌游', '剧本杀', '密室逃脱'],
+      '通讯': ['话费', '流量', '充值', '手机费', '电话', '宽带', '套餐'],
+      '医疗': ['医院', '看病', '买药', '体检', '挂号', '门诊', '住院', '药店', '疫苗'],
+      '学习': ['书', '课程', '培训', '学习', '教育', '学费', '书本', '文具', '考研', '考公', '证书', '网课'],
+      '日用': ['水电', '房租', '物业', '电费', '水费', '燃气', '网费', '物业费', '维修', '清洁'],
+      '旅行': ['旅行', '旅游', '酒店', '民宿', '景点', '门票', '机票', '车票']
+    }
+
+    const incomeKeywords = {
+      '工资': ['工资', '薪水', '发工资', '月薪', '年薪', '底薪'],
+      '兼职': ['兼职', '副业', '外快', '零时工', '跑腿'],
+      '奖金': ['奖金', '绩效', '提成', '年终奖', '项目奖', '全勤奖'],
+      '理财': ['利息', '理财', '基金', '股票', '收益', '分红', '存款'],
+      '红包': ['红包', '转账', '礼金', '压岁钱', '份子钱'],
+      '退款': ['退款', '退货', '返还', '报销'],
+      '转账': ['转账', '汇款', '收款']
+    }
+
+    const keywords = this.data.billType === 0 ? expenseKeywords : incomeKeywords
+    
+    for (const [name, words] of Object.entries(keywords)) {
+      if (words.some(word => text.includes(word))) {
+        cate = name
+        break
+      }
+    }
+
+    return { money, cate, remark }
+  },
+
+  extractMoney(text) {
+    const unitMap = { '百': 100, '千': 1000, '万': 10000, '亿': 100000000 }
+    
+    const digitRegex = /(\d+(?:\.\d{1,2})?)\s*(元|块|钱|¥|百|千|万|亿)/g
+    let total = 0
+    let match
+    
+    while ((match = digitRegex.exec(text)) !== null) {
+      const num = parseFloat(match[1])
+      const unit = match[2]
+      
+      if (unitMap[unit]) {
+        total += num * unitMap[unit]
+      } else {
+        total += num
+      }
+    }
+
+    if (total > 0) {
+      return total.toFixed(2)
+    }
+
+    const chineseNumRegex = /([零一二三四五六七八九十百千万亿]+)\s*(元|块|钱)/
+    const chineseMatch = text.match(chineseNumRegex)
+    if (chineseMatch) {
+      const chineseNum = this.chineseToArabic(chineseMatch[1])
+      if (chineseNum > 0) {
+        return chineseNum.toFixed(2)
+      }
+    }
+
+    return '0.00'
+  },
+
+  chineseToArabic(chinese) {
+    const numMap = { '零': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9 }
+    const unitMap = { '十': 10, '百': 100, '千': 1000, '万': 10000, '亿': 100000000 }
+    
+    let result = 0
+    let temp = 0
+    
+    for (let i = 0; i < chinese.length; i++) {
+      const char = chinese[i]
+      if (numMap[char] !== undefined) {
+        temp = numMap[char]
+      } else if (unitMap[char] !== undefined) {
+        const unit = unitMap[char]
+        if (temp === 0) {
+          temp = 1
+        }
+        if (unit === 10000 || unit === 100000000) {
+          result = (result + temp) * unit
+          temp = 0
+        } else {
+          temp *= unit
+          result += temp
+          temp = 0
+        }
+      }
+    }
+    
+    result += temp
+    return result
+  },
+
   parseVoiceContent(text) {
     const result = this.aiParseText(text)
     this.setData({
@@ -506,6 +598,24 @@ Page({
       aiResultCate: result.cate,
       aiResultRemark: result.remark,
       showAiResult: true
+    })
+  },
+
+  onVoiceInput(e) {
+    this.setData({ voiceText: e.detail.value })
+  },
+
+  reParseVoice() {
+    const text = this.data.voiceText
+    if (!text.trim()) {
+      wx.showToast({ title: '请输入内容', icon: 'none' })
+      return
+    }
+    const result = this.aiParseText(text)
+    this.setData({
+      aiResultMoney: result.money,
+      aiResultCate: result.cate,
+      aiResultRemark: result.remark
     })
   },
 

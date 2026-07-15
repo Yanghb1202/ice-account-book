@@ -440,13 +440,36 @@ page {
   color: #999;
 }
 
-.ai-result-text {
-  font-size: 28rpx;
-  color: #666;
+.ai-input-section {
+  margin-bottom: 24rpx;
+}
+
+.ai-input-label {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+}
+
+.ai-input {
+  width: 100%;
   padding: 20rpx;
   background: #fff9e8;
   border-radius: 16rpx;
-  margin-bottom: 24rpx;
+  font-size: 28rpx;
+  color: #222;
+  box-sizing: border-box;
+}
+
+.ai-input-btn {
+  display: inline-block;
+  padding: 12rpx 24rpx;
+  background: linear-gradient(135deg, #ffd66e 0%, #ffb22a 100%);
+  color: #222;
+  font-size: 24rpx;
+  font-weight: 600;
+  border-radius: 24rpx;
+  margin-top: 12rpx;
 }
 
 .ai-result-detail {
