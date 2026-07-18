@@ -3,7 +3,44 @@
   "compileType": "miniprogram",
   "libVersion": "3.16.1",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "value": "food-ai-server",
+        "type": "folder"
+      },
+      {
+        "value": "screenshots",
+        "type": "folder"
+      },
+      {
+        "value": "node_modules",
+        "type": "folder"
+      },
+      {
+        "value": "README.md",
+        "type": "file"
+      },
+      {
+        "value": "API文档.md",
+        "type": "file"
+      },
+      {
+        "value": "DEPLOYMENT.md",
+        "type": "file"
+      },
+      {
+        "value": "prompt_log.md",
+        "type": "file"
+      },
+      {
+        "value": "AI_Code_Review_Report.md",
+        "type": "file"
+      },
+      {
+        "value": "个人实训总结报告.md",
+        "type": "file"
+      }
+    ],
     "include": []
   },
   "setting": {

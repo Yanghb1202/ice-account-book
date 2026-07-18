@@ -4,3 +4,6 @@ miniprogram_npm/
 project.private.config.json
 .DS_Store
 *.log
+food-ai-server/node_modules/
+screenshots/
+~$*.md
